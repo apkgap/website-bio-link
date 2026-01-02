@@ -41,7 +41,7 @@ class WBL_Activator
     private static function register_post_type()
     {
         register_post_type(
-            'sky_social_set',
+            'wbl_social_set',
             array(
                 'public' => false,
                 'show_ui' => true,
@@ -77,7 +77,7 @@ class WBL_Activator
         // Check if any social sets exist
         $existing_sets = get_posts(
             array(
-                'post_type' => 'sky_social_set',
+                'post_type' => 'wbl_social_set',
                 'posts_per_page' => 1,
                 'post_status' => 'any',
             )
@@ -88,7 +88,7 @@ class WBL_Activator
             $default_set_id = wp_insert_post(
                 array(
                     'post_title' => __('Example Social Links', 'website-bio-link'),
-                    'post_type' => 'sky_social_set',
+                    'post_type' => 'wbl_social_set',
                     'post_status' => 'publish',
                     'post_author' => get_current_user_id(),
                 )
@@ -114,7 +114,7 @@ class WBL_Activator
                     ),
                 );
 
-                update_post_meta($default_set_id, '_sky_social_items', $example_links);
+                update_post_meta($default_set_id, '_wbl_social_items', $example_links);
             }
         }
     }

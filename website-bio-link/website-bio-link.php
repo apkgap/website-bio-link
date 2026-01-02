@@ -189,7 +189,7 @@ final class Website_Bio_Link_Social
         global $post_type;
 
         // Only load on our CPT edit screen
-        if (('post.php' === $hook || 'post-new.php' === $hook) && 'sky_social_set' === $post_type) {
+        if (('post.php' === $hook || 'post-new.php' === $hook) && 'wbl_social_set' === $post_type) {
             // Enqueue admin CSS
             wp_enqueue_style(
                 'wbl-social-admin',

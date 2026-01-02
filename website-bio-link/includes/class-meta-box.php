@@ -29,7 +29,7 @@ class WBL_Social_Meta_Box
      *
      * @var string
      */
-    private $meta_key = '_sky_social_items';
+    private $meta_key = '_wbl_social_items';
 
     /**
      * Get instance
@@ -60,20 +60,20 @@ class WBL_Social_Meta_Box
     {
         // Social Links Meta Box
         add_meta_box(
-            'sky_social_links',
+            'wbl_social_links',
             __('Social Links', 'website-bio-link'),
             array($this, 'render_meta_box'),
-            'sky_social_set',
+            'wbl_social_set',
             'normal',
             'high'
         );
 
         // Display Settings Meta Box
         add_meta_box(
-            'sky_social_display_settings',
+            'wbl_social_display_settings',
             __('Display Settings (Override Global Settings)', 'website-bio-link'),
             array($this, 'render_display_settings_meta_box'),
-            'sky_social_set',
+            'wbl_social_set',
             'side',
             'default'
         );
@@ -186,7 +186,7 @@ class WBL_Social_Meta_Box
     public function render_display_settings_meta_box($post)
     {
         // Get saved settings
-        $settings = get_post_meta($post->ID, '_sky_social_display_settings', true);
+        $settings = get_post_meta($post->ID, '_wbl_social_display_settings', true);
         if (!is_array($settings)) {
             $settings = array();
         }
@@ -661,7 +661,7 @@ class WBL_Social_Meta_Box
                 <span class="dashicons dashicons-menu text-gray-400 cursor-move"></span>
             </td>
             <td class="px-4 py-3">
-                <select name="sky_social_items[<?php echo esc_attr($index); ?>][platform]" class="wbl-social-platform">
+                <select name="wbl_social_items[<?php echo esc_attr($index); ?>][platform]" class="wbl-social-platform">
                     <option value=""><?php esc_html_e('Select Platform', 'website-bio-link'); ?></option>
                     <?php foreach ($platforms as $p) : ?>
                         <option value="<?php echo esc_attr($p['slug']); ?>" <?php selected($platform, $p['slug']); ?>>
@@ -673,7 +673,7 @@ class WBL_Social_Meta_Box
             <td class="px-4 py-3">
                 <input
                     type="url"
-                    name="sky_social_items[<?php echo esc_attr($index); ?>][url]"
+                    name="wbl_social_items[<?php echo esc_attr($index); ?>][url]"
                     value="<?php echo esc_attr($url); ?>"
                     placeholder="https://example.com/profile"
                     class="wbl-social-url" />
@@ -681,7 +681,7 @@ class WBL_Social_Meta_Box
             <td class="px-4 py-3">
                 <input
                     type="text"
-                    name="sky_social_items[<?php echo esc_attr($index); ?>][label]"
+                    name="wbl_social_items[<?php echo esc_attr($index); ?>][label]"
                     value="<?php echo esc_attr($label); ?>"
                     placeholder="<?php esc_attr_e('Optional label', 'website-bio-link'); ?>"
                     class="wbl-social-label" />
@@ -719,7 +719,7 @@ class WBL_Social_Meta_Box
         }
 
         // Check post type and post object
-        if (!isset($post->post_type) || 'sky_social_set' !== $post->post_type) {
+        if (!isset($post->post_type) || 'wbl_social_set' !== $post->post_type) {
             return;
         }
 
@@ -731,8 +731,8 @@ class WBL_Social_Meta_Box
         // Sanitize and save data
         $social_items = array();
 
-        if (isset($_POST['sky_social_items']) && is_array($_POST['sky_social_items'])) {
-            foreach ($_POST['sky_social_items'] as $item) {
+        if (isset($_POST['wbl_social_items']) && is_array($_POST['wbl_social_items'])) {
+            foreach ($_POST['wbl_social_items'] as $item) {
                 // Skip empty rows or invalid data
                 if (!is_array($item) || empty($item['platform']) || empty($item['url'])) {
                     continue;
@@ -783,7 +783,7 @@ class WBL_Social_Meta_Box
                 ),
             );
 
-            update_post_meta($post_id, '_sky_social_display_settings', $sanitized_settings);
+            update_post_meta($post_id, '_wbl_social_display_settings', $sanitized_settings);
         }
     }
 }

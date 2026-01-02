@@ -60,7 +60,7 @@ class WBL_Settings
     public function add_settings_page()
     {
         add_submenu_page(
-            'edit.php?post_type=sky_social_set',
+            'edit.php?post_type=wbl_social_set',
             __('Settings', 'website-bio-link'),
             __('Settings', 'website-bio-link'),
             'manage_options',
@@ -279,8 +279,8 @@ class WBL_Settings
                     <div class="wbl-info-box">
                         <h3><?php esc_html_e('Quick Links', 'website-bio-link'); ?></h3>
                         <ul>
-                            <li><a href="<?php echo esc_url(admin_url('post-new.php?post_type=sky_social_set')); ?>"><?php esc_html_e('Add New Set', 'website-bio-link'); ?></a></li>
-                            <li><a href="<?php echo esc_url(admin_url('edit.php?post_type=sky_social_set')); ?>"><?php esc_html_e('All Social Sets', 'website-bio-link'); ?></a></li>
+                            <li><a href="<?php echo esc_url(admin_url('post-new.php?post_type=wbl_social_set')); ?>"><?php esc_html_e('Add New Set', 'website-bio-link'); ?></a></li>
+                            <li><a href="<?php echo esc_url(admin_url('edit.php?post_type=wbl_social_set')); ?>"><?php esc_html_e('All Social Sets', 'website-bio-link'); ?></a></li>
                             <li><a href="<?php echo esc_url(admin_url('widgets.php')); ?>"><?php esc_html_e('Widgets', 'website-bio-link'); ?></a></li>
                         </ul>
                     </div>
@@ -510,7 +510,7 @@ class WBL_Settings
      */
     public function enqueue_settings_assets($hook)
     {
-        if ('sky_social_set_page_wbl-social-settings' !== $hook) {
+        if ('wbl_social_set_page_wbl-social-settings' !== $hook) {
             return;
         }
 
@@ -658,7 +658,7 @@ class WBL_Settings
      */
     private function count_social_sets()
     {
-        $count = wp_count_posts('sky_social_set');
+        $count = wp_count_posts('wbl_social_set');
         return isset($count->publish) ? $count->publish : 0;
     }
 
@@ -671,7 +671,7 @@ class WBL_Settings
 
         $query = "SELECT SUM(CHAR_LENGTH(meta_value) - CHAR_LENGTH(REPLACE(meta_value, '\"platform\"', ''))) / CHAR_LENGTH('\"platform\"') as total
                   FROM {$wpdb->postmeta}
-                  WHERE meta_key = '_sky_social_items'";
+                  WHERE meta_key = '_wbl_social_items'";
 
         $result = $wpdb->get_var($query);
         return $result ? intval($result) : 0;

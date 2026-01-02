@@ -42,7 +42,7 @@ class WBL_Social_Renderer
      */
     private function __construct()
     {
-        add_shortcode('sky_socials', array($this, 'render_shortcode'));
+        add_shortcode('wbl_socials', array($this, 'render_shortcode'));
     }
 
     /**
@@ -63,7 +63,7 @@ class WBL_Social_Renderer
                 'align'      => 'left',
             ),
             $atts,
-            'sky_socials'
+            'wbl_socials'
         );
 
         $post_id = intval($atts['id']);
@@ -73,7 +73,7 @@ class WBL_Social_Renderer
         }
 
         // Get social items
-        $social_items = get_post_meta($post_id, '_sky_social_items', true);
+        $social_items = get_post_meta($post_id, '_wbl_social_items', true);
 
         if (empty($social_items) || ! is_array($social_items)) {
             return '';

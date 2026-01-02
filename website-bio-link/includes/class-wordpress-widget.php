@@ -59,7 +59,7 @@ class WBL_Social_Widget extends \WP_Widget
 
         // Display social links
         if ($social_set_id) {
-            $social_items = get_post_meta($social_set_id, '_sky_social_items', true);
+            $social_items = get_post_meta($social_set_id, '_wbl_social_items', true);
 
             if (! empty($social_items) && is_array($social_items)) {
                 $render_args = array(
@@ -246,7 +246,7 @@ class WBL_Social_Widget extends \WP_Widget
 
         // Use get_posts instead of WP_Query to avoid global post conflicts
         $posts = get_posts(array(
-            'post_type'      => 'sky_social_set',
+            'post_type'      => 'wbl_social_set',
             'posts_per_page' => -1,
             'post_status'    => 'publish',
             'orderby'        => 'title',

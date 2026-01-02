@@ -1210,7 +1210,7 @@ class WBL_Social_Links_Widget extends \Elementor\Widget_Base
         }
 
         $args = array(
-            'post_type'      => 'sky_social_set',
+            'post_type'      => 'wbl_social_set',
             'posts_per_page' => -1,
             'post_status'    => 'publish',
             'orderby'        => 'title',
@@ -1252,7 +1252,7 @@ class WBL_Social_Links_Widget extends \Elementor\Widget_Base
         }
 
         // Get social items with error checking
-        $social_items = get_post_meta($social_set_id, '_sky_social_items', true);
+        $social_items = get_post_meta($social_set_id, '_wbl_social_items', true);
 
         if (empty($social_items) || !is_array($social_items)) {
             if (\Elementor\Plugin::$instance->editor->is_edit_mode()) {

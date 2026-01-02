@@ -23,7 +23,7 @@ function wbl_social_uninstall()
     // Delete all social sets
     $social_sets = get_posts(
         array(
-            'post_type'      => 'sky_social_set',
+            'post_type'      => 'wbl_social_set',
             'posts_per_page' => -1,
             'post_status'    => 'any',
         )
@@ -31,7 +31,7 @@ function wbl_social_uninstall()
 
     foreach ($social_sets as $set) {
         // Delete post meta
-        delete_post_meta($set->ID, '_sky_social_items');
+        delete_post_meta($set->ID, '_wbl_social_items');
 
         // Delete post
         wp_delete_post($set->ID, true);

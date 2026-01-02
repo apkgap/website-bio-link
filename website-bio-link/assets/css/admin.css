@@ -1,16 +1,16 @@
-/* Admin Styles for Sky Social Meta Box */
+/* Admin Styles for WBL Social Meta Box */
 
-.sky-social-repeater-wrapper {
+.wbl-social-repeater-wrapper {
     margin-top: 10px;
 }
 
-.sky-social-repeater {
+.wbl-social-repeater {
     border: 1px solid #e5e7eb;
     border-radius: 8px;
     overflow: hidden;
 }
 
-.sky-social-repeater thead th {
+.wbl-social-repeater thead th {
     background-color: #f9fafb;
     font-weight: 600;
     text-transform: uppercase;
@@ -21,34 +21,34 @@
     border-bottom: 2px solid #e5e7eb;
 }
 
-.sky-social-repeater tbody tr {
+.wbl-social-repeater tbody tr {
     cursor: move;
     transition: background-color 0.2s ease;
 }
 
-.sky-social-repeater tbody tr:hover {
+.wbl-social-repeater tbody tr:hover {
     background-color: #f9fafb;
 }
 
-.sky-social-repeater tbody tr.ui-sortable-helper {
+.wbl-social-repeater tbody tr.ui-sortable-helper {
     background-color: #ffffff;
     box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
     border-radius: 4px;
 }
 
-.sky-social-repeater tbody tr.ui-state-highlight {
+.wbl-social-repeater tbody tr.ui-state-highlight {
     background-color: #dbeafe;
     border: 2px dashed #3b82f6;
 }
 
-.sky-social-repeater td {
+.wbl-social-repeater td {
     padding: 12px 16px;
     vertical-align: middle;
 }
 
-.sky-social-repeater select,
-.sky-social-repeater input[type="text"],
-.sky-social-repeater input[type="url"] {
+.wbl-social-repeater select,
+.wbl-social-repeater input[type="text"],
+.wbl-social-repeater input[type="url"] {
     width: 100%;
     padding: 8px 12px;
     border: 1px solid #d1d5db;
@@ -57,15 +57,15 @@
     transition: all 0.2s ease;
 }
 
-.sky-social-repeater select:focus,
-.sky-social-repeater input[type="text"]:focus,
-.sky-social-repeater input[type="url"]:focus {
+.wbl-social-repeater select:focus,
+.wbl-social-repeater input[type="text"]:focus,
+.wbl-social-repeater input[type="url"]:focus {
     outline: none;
     border-color: #3b82f6;
     box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
 }
 
-.sky-social-add-row {
+.wbl-social-add-row {
     display: inline-flex;
     align-items: center;
     padding: 10px 20px;
@@ -80,24 +80,24 @@
     box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
 }
 
-.sky-social-add-row:hover {
+.wbl-social-add-row:hover {
     background-color: #2563eb;
     box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
     transform: translateY(-1px);
 }
 
-.sky-social-add-row:active {
+.wbl-social-add-row:active {
     transform: translateY(0);
 }
 
-.sky-social-add-row .dashicons {
+.wbl-social-add-row .dashicons {
     margin-right: 6px;
     font-size: 18px;
     width: 18px;
     height: 18px;
 }
 
-.sky-social-remove-row {
+.wbl-social-remove-row {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -112,12 +112,12 @@
     transition: all 0.2s ease;
 }
 
-.sky-social-remove-row:hover {
+.wbl-social-remove-row:hover {
     background-color: #fecaca;
     transform: scale(1.05);
 }
 
-.sky-social-remove-row .dashicons {
+.wbl-social-remove-row .dashicons {
     font-size: 16px;
     width: 16px;
     height: 16px;
@@ -129,12 +129,12 @@
     font-size: 20px;
 }
 
-.sky-social-repeater tbody tr:hover .dashicons-menu {
+.wbl-social-repeater tbody tr:hover .dashicons-menu {
     color: #6b7280;
 }
 
 /* Empty state */
-.sky-social-repeater tbody:empty::after {
+.wbl-social-repeater tbody:empty::after {
     content: 'No social links added yet. Click "Add Social Link" to get started.';
     display: block;
     padding: 40px 20px;
@@ -145,11 +145,12 @@
 
 /* Responsive adjustments */
 @media (max-width: 782px) {
-    .sky-social-repeater-wrapper {
+    .wbl-social-repeater-wrapper {
         overflow-x: auto;
     }
     
-    .sky-social-repeater {
+    .wbl-social-repeater {
         min-width: 800px;
     }
 }
+

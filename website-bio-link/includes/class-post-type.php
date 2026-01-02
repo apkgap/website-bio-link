@@ -101,6 +101,6 @@ class WBL_Social_Post_Type
             'show_in_rest'          => false,
         );
 
-        register_post_type('sky_social_set', $args);
+        register_post_type('wbl_social_set', $args);
     }
 }
