@@ -115,6 +115,15 @@ class WBL_Settings
             'wbl_general_section'
         );
 
+        // Default Colors for Each Style
+        add_settings_field(
+            'default_colors',
+            __('Default Colors by Style', 'website-bio-link'),
+            array($this, 'render_colors_field'),
+            'wbl-social-settings',
+            'wbl_general_section'
+        );
+
         // Assets Settings Section
         add_settings_section(
             'wbl_assets_section',
@@ -169,6 +178,22 @@ class WBL_Settings
         $sanitized['default_style'] = isset($input['default_style']) ? sanitize_text_field($input['default_style']) : 'circle';
         $sanitized['default_size'] = isset($input['default_size']) ? sanitize_text_field($input['default_size']) : 'medium';
         $sanitized['default_gap'] = isset($input['default_gap']) ? sanitize_text_field($input['default_gap']) : 'medium';
+
+        // Sanitize colors for each style
+        $sanitized['default_colors'] = array();
+        if (isset($input['default_colors']) && is_array($input['default_colors'])) {
+            foreach ($input['default_colors'] as $style => $colors) {
+                if (is_array($colors)) {
+                    $sanitized['default_colors'][$style] = array(
+                        'primary' => isset($colors['primary']) ? sanitize_hex_color($colors['primary']) : '',
+                        'secondary' => isset($colors['secondary']) ? sanitize_hex_color($colors['secondary']) : '',
+                        'hover_primary' => isset($colors['hover_primary']) ? sanitize_hex_color($colors['hover_primary']) : '',
+                        'hover_secondary' => isset($colors['hover_secondary']) ? sanitize_hex_color($colors['hover_secondary']) : '',
+                    );
+                }
+            }
+        }
+
         $sanitized['enable_fontawesome'] = isset($input['enable_fontawesome']) ? true : false;
         $sanitized['enable_tailwind'] = isset($input['enable_tailwind']) ? true : false;
         $sanitized['delete_on_uninstall'] = isset($input['delete_on_uninstall']) ? true : false;
@@ -185,6 +210,14 @@ class WBL_Settings
             'default_style' => 'circle',
             'default_size' => 'medium',
             'default_gap' => 'medium',
+            'default_colors' => array(
+                'circle' => array('primary' => '#3b82f6', 'secondary' => '#ffffff', 'hover_primary' => '#2563eb', 'hover_secondary' => '#ffffff'),
+                'rounded' => array('primary' => '#3b82f6', 'secondary' => '#ffffff', 'hover_primary' => '#2563eb', 'hover_secondary' => '#ffffff'),
+                'flat' => array('primary' => '#3b82f6', 'secondary' => '#3b82f6', 'hover_primary' => '#2563eb', 'hover_secondary' => '#ffffff'),
+                'minimal' => array('primary' => '#3b82f6', 'secondary' => '', 'hover_primary' => '#2563eb', 'hover_secondary' => ''),
+                'glass' => array('primary' => '#3b82f6', 'secondary' => 'rgba(255,255,255,0.15)', 'hover_primary' => '#2563eb', 'hover_secondary' => 'rgba(255,255,255,0.25)'),
+                'gradient' => array('primary' => '#3b82f6', 'secondary' => '#8b5cf6', 'hover_primary' => '#2563eb', 'hover_secondary' => '#7c3aed'),
+            ),
             'enable_fontawesome' => true,
             'enable_tailwind' => true,
             'delete_on_uninstall' => true,
@@ -337,6 +370,99 @@ class WBL_Settings
     <?php
     }
 
+    public function render_colors_field()
+    {
+        $settings = $this->get_settings();
+        $colors = $settings['default_colors'];
+        $styles = array(
+            'circle' => array(
+                'label' => __('Circle', 'website-bio-link'),
+                'description' => __('Primary = Background, Secondary = Icon Color', 'website-bio-link'),
+            ),
+            'rounded' => array(
+                'label' => __('Rounded Square', 'website-bio-link'),
+                'description' => __('Primary = Background, Secondary = Icon Color', 'website-bio-link'),
+            ),
+            'flat' => array(
+                'label' => __('Flat Outline', 'website-bio-link'),
+                'description' => __('Primary = Border & Icon, Hover Primary = Background', 'website-bio-link'),
+            ),
+            'minimal' => array(
+                'label' => __('Minimal', 'website-bio-link'),
+                'description' => __('Primary = Icon Color only', 'website-bio-link'),
+            ),
+            'glass' => array(
+                'label' => __('Glassmorphism', 'website-bio-link'),
+                'description' => __('Primary = Icon, Secondary = Background (use rgba)', 'website-bio-link'),
+            ),
+            'gradient' => array(
+                'label' => __('Gradient', 'website-bio-link'),
+                'description' => __('Primary = Start Color, Secondary = End Color', 'website-bio-link'),
+            ),
+        );
+    ?>
+        <div class="wbl-color-settings">
+            <p class="description" style="margin-bottom: 20px; padding: 10px; background: #e7f3ff; border-left: 4px solid #3b82f6;">
+                <strong><?php esc_html_e('💡 Tip:', 'website-bio-link'); ?></strong>
+                <?php esc_html_e('These colors will be used as defaults for all Social Sets. You can override them in individual Social Set settings.', 'website-bio-link'); ?>
+            </p>
+
+            <?php foreach ($styles as $style_key => $style_data) :
+                $style_colors = isset($colors[$style_key]) ? $colors[$style_key] : array();
+                $primary = isset($style_colors['primary']) ? $style_colors['primary'] : '#3b82f6';
+                $secondary = isset($style_colors['secondary']) ? $style_colors['secondary'] : '#ffffff';
+                $hover_primary = isset($style_colors['hover_primary']) ? $style_colors['hover_primary'] : '#2563eb';
+                $hover_secondary = isset($style_colors['hover_secondary']) ? $style_colors['hover_secondary'] : '#ffffff';
+            ?>
+                <div class="wbl-color-group" data-style="<?php echo esc_attr($style_key); ?>">
+                    <h4 style="margin-bottom: 5px;">
+                        <?php echo esc_html($style_data['label']); ?>
+                    </h4>
+                    <p class="description" style="margin: 0 0 15px 0; font-style: italic; color: #666;">
+                        <?php echo esc_html($style_data['description']); ?>
+                    </p>
+
+                    <div class="wbl-color-row">
+                        <label>
+                            <span><?php esc_html_e('Primary Color:', 'website-bio-link'); ?></span>
+                            <input type="text"
+                                name="<?php echo esc_attr($this->option_name); ?>[default_colors][<?php echo esc_attr($style_key); ?>][primary]"
+                                value="<?php echo esc_attr($primary); ?>"
+                                class="wbl-color-picker" />
+                        </label>
+                        <label>
+                            <span><?php esc_html_e('Secondary Color:', 'website-bio-link'); ?></span>
+                            <input type="text"
+                                name="<?php echo esc_attr($this->option_name); ?>[default_colors][<?php echo esc_attr($style_key); ?>][secondary]"
+                                value="<?php echo esc_attr($secondary); ?>"
+                                class="wbl-color-picker"
+                                placeholder="<?php echo $style_key === 'glass' ? 'rgba(255,255,255,0.15)' : ''; ?>" />
+                        </label>
+                    </div>
+                    <div class="wbl-color-row">
+                        <label>
+                            <span><?php esc_html_e('Hover Primary:', 'website-bio-link'); ?></span>
+                            <input type="text"
+                                name="<?php echo esc_attr($this->option_name); ?>[default_colors][<?php echo esc_attr($style_key); ?>][hover_primary]"
+                                value="<?php echo esc_attr($hover_primary); ?>"
+                                class="wbl-color-picker" />
+                        </label>
+                        <label>
+                            <span><?php esc_html_e('Hover Secondary:', 'website-bio-link'); ?></span>
+                            <input type="text"
+                                name="<?php echo esc_attr($this->option_name); ?>[default_colors][<?php echo esc_attr($style_key); ?>][hover_secondary]"
+                                value="<?php echo esc_attr($hover_secondary); ?>"
+                                class="wbl-color-picker"
+                                placeholder="<?php echo $style_key === 'glass' ? 'rgba(255,255,255,0.25)' : ''; ?>" />
+                        </label>
+                    </div>
+                </div>
+            <?php endforeach; ?>
+        </div>
+        <p class="description"><?php esc_html_e('Set default colors for each icon style. These will be used when "Use Brand Colors" is disabled.', 'website-bio-link'); ?></p>
+    <?php
+    }
+
     public function render_fontawesome_field()
     {
         $settings = $this->get_settings();
@@ -387,6 +513,17 @@ class WBL_Settings
         if ('sky_social_set_page_wbl-social-settings' !== $hook) {
             return;
         }
+
+        // Enqueue WordPress color picker
+        wp_enqueue_style('wp-color-picker');
+        wp_enqueue_script('wp-color-picker');
+
+        // Add inline script to initialize color pickers
+        wp_add_inline_script('wp-color-picker', '
+            jQuery(document).ready(function($) {
+                $(".wbl-color-picker").wpColorPicker();
+            });
+        ');
 
         wp_add_inline_style('wp-admin', $this->get_inline_css());
     }
@@ -469,8 +606,47 @@ class WBL_Settings
             .wbl-info-box a:hover {
                 color: #135e96;
             }
+            .wbl-color-settings {
+                display: grid;
+                gap: 20px;
+                margin-top: 10px;
+            }
+            .wbl-color-group {
+                padding: 15px;
+                background: #f9f9f9;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+            }
+            .wbl-color-group h4 {
+                margin: 0 0 12px;
+                font-size: 14px;
+                font-weight: 600;
+                color: #1d2327;
+            }
+            .wbl-color-row {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 15px;
+                margin-bottom: 10px;
+            }
+            .wbl-color-row:last-child {
+                margin-bottom: 0;
+            }
+            .wbl-color-row label {
+                display: flex;
+                flex-direction: column;
+                gap: 5px;
+            }
+            .wbl-color-row label span {
+                font-size: 12px;
+                font-weight: 500;
+                color: #555;
+            }
             @media (max-width: 782px) {
                 .wbl-settings-container {
+                    grid-template-columns: 1fr;
+                }
+                .wbl-color-row {
                     grid-template-columns: 1fr;
                 }
             }

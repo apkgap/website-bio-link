@@ -58,6 +58,7 @@ class WBL_Social_Meta_Box
      */
     public function add_meta_box()
     {
+        // Social Links Meta Box
         add_meta_box(
             'sky_social_links',
             __('Social Links', 'website-bio-link'),
@@ -65,6 +66,16 @@ class WBL_Social_Meta_Box
             'sky_social_set',
             'normal',
             'high'
+        );
+
+        // Display Settings Meta Box
+        add_meta_box(
+            'sky_social_display_settings',
+            __('Display Settings (Override Global Settings)', 'website-bio-link'),
+            array($this, 'render_display_settings_meta_box'),
+            'sky_social_set',
+            'side',
+            'default'
         );
     }
 
@@ -163,6 +174,468 @@ class WBL_Social_Meta_Box
                 box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
             }
         </style>
+
+    <?php
+    }
+
+    /**
+     * Render Display Settings Meta Box
+     *
+     * @param WP_Post $post Current post object
+     */
+    public function render_display_settings_meta_box($post)
+    {
+        // Get saved settings
+        $settings = get_post_meta($post->ID, '_sky_social_display_settings', true);
+        if (!is_array($settings)) {
+            $settings = array();
+        }
+
+        // Default values
+        $defaults = array(
+            'icon_style' => '',
+            'icon_size_preset' => '',
+            'icon_size_custom' => '',
+            'gap_preset' => '',
+            'gap_custom' => '',
+            'layout_type' => '',
+            'grid_columns' => '',
+            'use_custom_colors' => false,
+            'colors' => array(
+                'primary' => '',
+                'secondary' => '',
+                'hover_primary' => '',
+                'hover_secondary' => '',
+            ),
+        );
+
+        $settings = wp_parse_args($settings, $defaults);
+    ?>
+
+        <div class="wbl-display-settings">
+            <p class="description" style="margin-bottom: 15px;">
+                <strong><?php esc_html_e('Note:', 'website-bio-link'); ?></strong>
+                <?php esc_html_e('These settings will override global settings from the Settings page. Leave empty to use global defaults.', 'website-bio-link'); ?>
+            </p>
+
+            <!-- Icon Style -->
+            <div class="wbl-setting-field">
+                <label for="wbl_icon_style">
+                    <strong><?php esc_html_e('Icon Style', 'website-bio-link'); ?></strong>
+                </label>
+                <select name="wbl_display_settings[icon_style]" id="wbl_icon_style" class="widefat">
+                    <option value=""><?php esc_html_e('Use Global Setting', 'website-bio-link'); ?></option>
+                    <option value="circle" <?php selected($settings['icon_style'], 'circle'); ?>><?php esc_html_e('Circle', 'website-bio-link'); ?></option>
+                    <option value="rounded" <?php selected($settings['icon_style'], 'rounded'); ?>><?php esc_html_e('Rounded Square', 'website-bio-link'); ?></option>
+                    <option value="flat" <?php selected($settings['icon_style'], 'flat'); ?>><?php esc_html_e('Flat Outline', 'website-bio-link'); ?></option>
+                    <option value="minimal" <?php selected($settings['icon_style'], 'minimal'); ?>><?php esc_html_e('Minimal', 'website-bio-link'); ?></option>
+                    <option value="glass" <?php selected($settings['icon_style'], 'glass'); ?>><?php esc_html_e('Glassmorphism', 'website-bio-link'); ?></option>
+                    <option value="gradient" <?php selected($settings['icon_style'], 'gradient'); ?>><?php esc_html_e('Gradient', 'website-bio-link'); ?></option>
+                </select>
+            </div>
+
+            <!-- Icon Size -->
+            <div class="wbl-setting-field">
+                <label for="wbl_icon_size_preset">
+                    <strong><?php esc_html_e('Icon Size', 'website-bio-link'); ?></strong>
+                </label>
+                <select name="wbl_display_settings[icon_size_preset]" id="wbl_icon_size_preset" class="widefat">
+                    <option value=""><?php esc_html_e('Use Global Setting', 'website-bio-link'); ?></option>
+                    <option value="small" <?php selected($settings['icon_size_preset'], 'small'); ?>><?php esc_html_e('Small (16px)', 'website-bio-link'); ?></option>
+                    <option value="medium" <?php selected($settings['icon_size_preset'], 'medium'); ?>><?php esc_html_e('Medium (20px)', 'website-bio-link'); ?></option>
+                    <option value="large" <?php selected($settings['icon_size_preset'], 'large'); ?>><?php esc_html_e('Large (28px)', 'website-bio-link'); ?></option>
+                    <option value="xlarge" <?php selected($settings['icon_size_preset'], 'xlarge'); ?>><?php esc_html_e('Extra Large (36px)', 'website-bio-link'); ?></option>
+                    <option value="custom" <?php selected($settings['icon_size_preset'], 'custom'); ?>><?php esc_html_e('Custom', 'website-bio-link'); ?></option>
+                </select>
+                <input type="number"
+                    name="wbl_display_settings[icon_size_custom]"
+                    id="wbl_icon_size_custom"
+                    class="widefat"
+                    placeholder="<?php esc_attr_e('Custom size in px', 'website-bio-link'); ?>"
+                    value="<?php echo esc_attr($settings['icon_size_custom']); ?>"
+                    <?php if ($settings['icon_size_preset'] === 'custom') : ?>min="10" max="100" <?php else : ?>disabled="disabled" <?php endif; ?>
+                    style="margin-top: 5px; display: <?php echo $settings['icon_size_preset'] === 'custom' ? 'block' : 'none'; ?>;" />
+            </div>
+
+            <!-- Gap -->
+            <div class="wbl-setting-field">
+                <label for="wbl_gap_preset">
+                    <strong><?php esc_html_e('Gap Between Icons', 'website-bio-link'); ?></strong>
+                </label>
+                <select name="wbl_display_settings[gap_preset]" id="wbl_gap_preset" class="widefat">
+                    <option value=""><?php esc_html_e('Use Global Setting', 'website-bio-link'); ?></option>
+                    <option value="small" <?php selected($settings['gap_preset'], 'small'); ?>><?php esc_html_e('Small (8px)', 'website-bio-link'); ?></option>
+                    <option value="medium" <?php selected($settings['gap_preset'], 'medium'); ?>><?php esc_html_e('Medium (16px)', 'website-bio-link'); ?></option>
+                    <option value="large" <?php selected($settings['gap_preset'], 'large'); ?>><?php esc_html_e('Large (24px)', 'website-bio-link'); ?></option>
+                    <option value="xlarge" <?php selected($settings['gap_preset'], 'xlarge'); ?>><?php esc_html_e('Extra Large (32px)', 'website-bio-link'); ?></option>
+                    <option value="custom" <?php selected($settings['gap_preset'], 'custom'); ?>><?php esc_html_e('Custom', 'website-bio-link'); ?></option>
+                </select>
+                <input type="number"
+                    name="wbl_display_settings[gap_custom]"
+                    id="wbl_gap_custom"
+                    class="widefat"
+                    placeholder="<?php esc_attr_e('Custom gap in px', 'website-bio-link'); ?>"
+                    value="<?php echo esc_attr($settings['gap_custom']); ?>"
+                    <?php if ($settings['gap_preset'] === 'custom') : ?>min="0" max="100" <?php else : ?>disabled="disabled" <?php endif; ?>
+                    style="margin-top: 5px; display: <?php echo $settings['gap_preset'] === 'custom' ? 'block' : 'none'; ?>;" />
+            </div>
+
+            <!-- Layout Type -->
+            <div class="wbl-setting-field">
+                <label for="wbl_layout_type">
+                    <strong><?php esc_html_e('Layout Type', 'website-bio-link'); ?></strong>
+                </label>
+                <select name="wbl_display_settings[layout_type]" id="wbl_layout_type" class="widefat">
+                    <option value=""><?php esc_html_e('Use Global Setting', 'website-bio-link'); ?></option>
+                    <option value="horizontal" <?php selected($settings['layout_type'], 'horizontal'); ?>><?php esc_html_e('Horizontal', 'website-bio-link'); ?></option>
+                    <option value="vertical" <?php selected($settings['layout_type'], 'vertical'); ?>><?php esc_html_e('Vertical', 'website-bio-link'); ?></option>
+                    <option value="inline" <?php selected($settings['layout_type'], 'inline'); ?>><?php esc_html_e('Inline', 'website-bio-link'); ?></option>
+                    <option value="grid" <?php selected($settings['layout_type'], 'grid'); ?>><?php esc_html_e('Grid', 'website-bio-link'); ?></option>
+                </select>
+            </div>
+
+            <!-- Grid Columns (shown only when grid is selected) -->
+            <div class="wbl-setting-field" id="wbl_grid_columns_field" style="display: <?php echo $settings['layout_type'] === 'grid' ? 'block' : 'none'; ?>;">
+                <label for="wbl_grid_columns">
+                    <strong><?php esc_html_e('Grid Columns', 'website-bio-link'); ?></strong>
+                </label>
+                <input type="number"
+                    name="wbl_display_settings[grid_columns]"
+                    id="wbl_grid_columns"
+                    class="widefat"
+                    value="<?php echo esc_attr($settings['grid_columns']); ?>"
+                    placeholder="3"
+                    <?php if ($settings['layout_type'] === 'grid') : ?>min="1" max="12" <?php else : ?>disabled="disabled" <?php endif; ?> />
+            </div>
+
+            <!-- Custom Colors -->
+            <div class="wbl-setting-field">
+                <label>
+                    <strong><?php esc_html_e('Colors', 'website-bio-link'); ?></strong>
+                </label>
+
+                <!-- Color Source Toggle -->
+                <div class="wbl-color-source-toggle" style="margin: 10px 0;">
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                        <input type="checkbox"
+                            name="wbl_display_settings[use_custom_colors]"
+                            id="wbl_use_custom_colors"
+                            value="1"
+                            <?php checked(!empty($settings['use_custom_colors']), true); ?>
+                            style="margin: 0;" />
+                        <span><?php esc_html_e('Use Custom Colors (Override Settings)', 'website-bio-link'); ?></span>
+                    </label>
+                    <p class="description" style="margin: 5px 0 0 0;">
+                        <?php esc_html_e('Check to use custom colors for this Social Set. Uncheck to use colors from Settings page.', 'website-bio-link'); ?>
+                    </p>
+                </div>
+
+                <!-- Custom Colors Fields (shown only when toggle is ON and icon style is selected) -->
+                <div id="wbl_custom_colors_fields" style="display: <?php echo !empty($settings['use_custom_colors']) && !empty($settings['icon_style']) ? 'block' : 'none'; ?>; margin-top: 15px; padding: 15px; background: #f9f9f9; border: 1px solid #ddd; border-radius: 4px;">
+
+                    <!-- Color fields for Circle & Rounded -->
+                    <div class="wbl-color-group" data-styles="circle,rounded" style="display: none;">
+                        <p class="description" style="margin-bottom: 10px;">
+                            <strong><?php esc_html_e('Circle & Rounded Square Colors:', 'website-bio-link'); ?></strong><br>
+                            <?php esc_html_e('Primary = Background, Secondary = Icon Color', 'website-bio-link'); ?>
+                        </p>
+
+                        <div class="wbl-color-field">
+                            <label for="wbl_color_primary"><?php esc_html_e('Primary Color (Background)', 'website-bio-link'); ?></label>
+                            <input type="text"
+                                name="wbl_display_settings[colors][primary]"
+                                class="wbl-color-picker-small"
+                                value="<?php echo esc_attr($settings['colors']['primary']); ?>" />
+                        </div>
+
+                        <div class="wbl-color-field">
+                            <label for="wbl_color_secondary"><?php esc_html_e('Secondary Color (Icon)', 'website-bio-link'); ?></label>
+                            <input type="text"
+                                name="wbl_display_settings[colors][secondary]"
+                                class="wbl-color-picker-small"
+                                value="<?php echo esc_attr($settings['colors']['secondary']); ?>" />
+                        </div>
+
+                        <div class="wbl-color-field">
+                            <label for="wbl_color_hover_primary"><?php esc_html_e('Hover Primary (Background)', 'website-bio-link'); ?></label>
+                            <input type="text"
+                                name="wbl_display_settings[colors][hover_primary]"
+                                class="wbl-color-picker-small"
+                                value="<?php echo esc_attr($settings['colors']['hover_primary']); ?>" />
+                        </div>
+
+                        <div class="wbl-color-field">
+                            <label for="wbl_color_hover_secondary"><?php esc_html_e('Hover Secondary (Icon)', 'website-bio-link'); ?></label>
+                            <input type="text"
+                                name="wbl_display_settings[colors][hover_secondary]"
+                                class="wbl-color-picker-small"
+                                value="<?php echo esc_attr($settings['colors']['hover_secondary']); ?>" />
+                        </div>
+                    </div>
+
+                    <!-- Color fields for Flat -->
+                    <div class="wbl-color-group" data-styles="flat" style="display: none;">
+                        <p class="description" style="margin-bottom: 10px;">
+                            <strong><?php esc_html_e('Flat Outline Colors:', 'website-bio-link'); ?></strong><br>
+                            <?php esc_html_e('Primary = Border & Icon Color, Hover = Background becomes Primary', 'website-bio-link'); ?>
+                        </p>
+
+                        <div class="wbl-color-field">
+                            <label><?php esc_html_e('Primary Color (Border & Icon)', 'website-bio-link'); ?></label>
+                            <input type="text"
+                                name="wbl_display_settings[colors][primary]"
+                                class="wbl-color-picker-small"
+                                value="<?php echo esc_attr($settings['colors']['primary']); ?>" />
+                        </div>
+
+                        <div class="wbl-color-field">
+                            <label><?php esc_html_e('Hover Primary (Background)', 'website-bio-link'); ?></label>
+                            <input type="text"
+                                name="wbl_display_settings[colors][hover_primary]"
+                                class="wbl-color-picker-small"
+                                value="<?php echo esc_attr($settings['colors']['hover_primary']); ?>" />
+                        </div>
+
+                        <div class="wbl-color-field">
+                            <label><?php esc_html_e('Hover Secondary (Icon Color)', 'website-bio-link'); ?></label>
+                            <input type="text"
+                                name="wbl_display_settings[colors][hover_secondary]"
+                                class="wbl-color-picker-small"
+                                value="<?php echo esc_attr($settings['colors']['hover_secondary']); ?>" />
+                        </div>
+                    </div>
+
+                    <!-- Color fields for Minimal -->
+                    <div class="wbl-color-group" data-styles="minimal" style="display: none;">
+                        <p class="description" style="margin-bottom: 10px;">
+                            <strong><?php esc_html_e('Minimal Colors:', 'website-bio-link'); ?></strong><br>
+                            <?php esc_html_e('Primary = Icon Color only', 'website-bio-link'); ?>
+                        </p>
+
+                        <div class="wbl-color-field">
+                            <label><?php esc_html_e('Primary Color (Icon)', 'website-bio-link'); ?></label>
+                            <input type="text"
+                                name="wbl_display_settings[colors][primary]"
+                                class="wbl-color-picker-small"
+                                value="<?php echo esc_attr($settings['colors']['primary']); ?>" />
+                        </div>
+
+                        <div class="wbl-color-field">
+                            <label><?php esc_html_e('Hover Primary (Icon)', 'website-bio-link'); ?></label>
+                            <input type="text"
+                                name="wbl_display_settings[colors][hover_primary]"
+                                class="wbl-color-picker-small"
+                                value="<?php echo esc_attr($settings['colors']['hover_primary']); ?>" />
+                        </div>
+                    </div>
+
+                    <!-- Color fields for Glass -->
+                    <div class="wbl-color-group" data-styles="glass" style="display: none;">
+                        <p class="description" style="margin-bottom: 10px;">
+                            <strong><?php esc_html_e('Glassmorphism Colors:', 'website-bio-link'); ?></strong><br>
+                            <?php esc_html_e('Primary = Icon Color, Secondary = Background (use rgba)', 'website-bio-link'); ?>
+                        </p>
+
+                        <div class="wbl-color-field">
+                            <label><?php esc_html_e('Primary Color (Icon)', 'website-bio-link'); ?></label>
+                            <input type="text"
+                                name="wbl_display_settings[colors][primary]"
+                                class="wbl-color-picker-small"
+                                value="<?php echo esc_attr($settings['colors']['primary']); ?>" />
+                        </div>
+
+                        <div class="wbl-color-field">
+                            <label><?php esc_html_e('Secondary Color (Background)', 'website-bio-link'); ?></label>
+                            <input type="text"
+                                name="wbl_display_settings[colors][secondary]"
+                                class="wbl-color-picker-small"
+                                value="<?php echo esc_attr($settings['colors']['secondary']); ?>"
+                                placeholder="rgba(255,255,255,0.15)" />
+                        </div>
+
+                        <div class="wbl-color-field">
+                            <label><?php esc_html_e('Hover Primary (Icon)', 'website-bio-link'); ?></label>
+                            <input type="text"
+                                name="wbl_display_settings[colors][hover_primary]"
+                                class="wbl-color-picker-small"
+                                value="<?php echo esc_attr($settings['colors']['hover_primary']); ?>" />
+                        </div>
+
+                        <div class="wbl-color-field">
+                            <label><?php esc_html_e('Hover Secondary (Background)', 'website-bio-link'); ?></label>
+                            <input type="text"
+                                name="wbl_display_settings[colors][hover_secondary]"
+                                class="wbl-color-picker-small"
+                                value="<?php echo esc_attr($settings['colors']['hover_secondary']); ?>"
+                                placeholder="rgba(255,255,255,0.25)" />
+                        </div>
+                    </div>
+
+                    <!-- Color fields for Gradient -->
+                    <div class="wbl-color-group" data-styles="gradient" style="display: none;">
+                        <p class="description" style="margin-bottom: 10px;">
+                            <strong><?php esc_html_e('Gradient Colors:', 'website-bio-link'); ?></strong><br>
+                            <?php esc_html_e('Primary = Start Color, Secondary = End Color', 'website-bio-link'); ?>
+                        </p>
+
+                        <div class="wbl-color-field">
+                            <label><?php esc_html_e('Primary Color (Gradient Start)', 'website-bio-link'); ?></label>
+                            <input type="text"
+                                name="wbl_display_settings[colors][primary]"
+                                class="wbl-color-picker-small"
+                                value="<?php echo esc_attr($settings['colors']['primary']); ?>" />
+                        </div>
+
+                        <div class="wbl-color-field">
+                            <label><?php esc_html_e('Secondary Color (Gradient End)', 'website-bio-link'); ?></label>
+                            <input type="text"
+                                name="wbl_display_settings[colors][secondary]"
+                                class="wbl-color-picker-small"
+                                value="<?php echo esc_attr($settings['colors']['secondary']); ?>" />
+                        </div>
+
+                        <div class="wbl-color-field">
+                            <label><?php esc_html_e('Hover Primary (Gradient Start)', 'website-bio-link'); ?></label>
+                            <input type="text"
+                                name="wbl_display_settings[colors][hover_primary]"
+                                class="wbl-color-picker-small"
+                                value="<?php echo esc_attr($settings['colors']['hover_primary']); ?>" />
+                        </div>
+
+                        <div class="wbl-color-field">
+                            <label><?php esc_html_e('Hover Secondary (Gradient End)', 'website-bio-link'); ?></label>
+                            <input type="text"
+                                name="wbl_display_settings[colors][hover_secondary]"
+                                class="wbl-color-picker-small"
+                                value="<?php echo esc_attr($settings['colors']['hover_secondary']); ?>" />
+                        </div>
+                    </div>
+
+                    <!-- Warning when no icon style selected -->
+                    <div id="wbl_no_style_warning" style="display: none; padding: 10px; background: #fff3cd; border: 1px solid #ffc107; border-radius: 4px;">
+                        <p style="margin: 0; color: #856404;">
+                            <strong><?php esc_html_e('Note:', 'website-bio-link'); ?></strong>
+                            <?php esc_html_e('Please select an Icon Style above to configure custom colors.', 'website-bio-link'); ?>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <style>
+            .wbl-display-settings {
+                padding: 10px 0;
+            }
+
+            .wbl-setting-field {
+                margin-bottom: 20px;
+            }
+
+            .wbl-setting-field label {
+                display: block;
+                margin-bottom: 5px;
+            }
+
+            .wbl-setting-field select,
+            .wbl-setting-field input[type="number"] {
+                width: 100%;
+            }
+
+            .wbl-color-field {
+                margin-bottom: 10px;
+            }
+
+            .wbl-color-field label {
+                display: block;
+                margin-bottom: 3px;
+                font-size: 12px;
+                font-weight: 500;
+            }
+
+            .wbl-color-picker-small {
+                width: 100%;
+            }
+
+            .wbl-color-source-toggle {
+                padding: 10px;
+                background: #f0f0f1;
+                border-radius: 4px;
+            }
+        </style>
+
+        <script>
+            jQuery(document).ready(function($) {
+                // Initialize color pickers
+                $('.wbl-color-picker-small').wpColorPicker();
+
+                // Function to update color fields based on icon style
+                function updateColorFields() {
+                    var iconStyle = $('#wbl_icon_style').val();
+                    var useCustomColors = $('#wbl_use_custom_colors').is(':checked');
+
+                    // Hide all color groups first
+                    $('.wbl-color-group').hide();
+                    $('#wbl_no_style_warning').hide();
+
+                    if (useCustomColors) {
+                        $('#wbl_custom_colors_fields').show();
+
+                        if (iconStyle && iconStyle !== '') {
+                            // Show relevant color group based on selected style
+                            $('.wbl-color-group').each(function() {
+                                var styles = $(this).data('styles').toString().split(',');
+                                if (styles.indexOf(iconStyle) !== -1) {
+                                    $(this).show();
+                                }
+                            });
+                        } else {
+                            // Show warning if no style selected
+                            $('#wbl_no_style_warning').show();
+                        }
+                    } else {
+                        $('#wbl_custom_colors_fields').hide();
+                    }
+                }
+
+                // Show/hide custom size input
+                $('#wbl_icon_size_preset').on('change', function() {
+                    if ($(this).val() === 'custom') {
+                        $('#wbl_icon_size_custom').show().prop('disabled', false).attr('min', '10').attr('max', '100');
+                    } else {
+                        $('#wbl_icon_size_custom').hide().prop('disabled', true).removeAttr('min').removeAttr('max');
+                    }
+                });
+
+                // Show/hide custom gap input
+                $('#wbl_gap_preset').on('change', function() {
+                    if ($(this).val() === 'custom') {
+                        $('#wbl_gap_custom').show().prop('disabled', false).attr('min', '0').attr('max', '100');
+                    } else {
+                        $('#wbl_gap_custom').hide().prop('disabled', true).removeAttr('min').removeAttr('max');
+                    }
+                });
+
+                // Show/hide grid columns
+                $('#wbl_layout_type').on('change', function() {
+                    if ($(this).val() === 'grid') {
+                        $('#wbl_grid_columns_field').show();
+                        $('#wbl_grid_columns').prop('disabled', false).attr('min', '1').attr('max', '12');
+                    } else {
+                        $('#wbl_grid_columns_field').hide();
+                        $('#wbl_grid_columns').prop('disabled', true).removeAttr('min').removeAttr('max');
+                    }
+                });
+
+                // Update color fields when icon style changes
+                $('#wbl_icon_style').on('change', updateColorFields);
+
+                // Update color fields when custom colors toggle changes
+                $('#wbl_use_custom_colors').on('change', updateColorFields);
+
+                // Initial update on page load
+                updateColorFields();
+            });
+        </script>
 
     <?php
     }
@@ -287,6 +760,30 @@ class WBL_Social_Meta_Box
         } else {
             // Delete meta if no items
             delete_post_meta($post_id, $this->meta_key);
+        }
+
+        // Save Display Settings
+        if (isset($_POST['wbl_display_settings']) && is_array($_POST['wbl_display_settings'])) {
+            $display_settings = $_POST['wbl_display_settings'];
+
+            $sanitized_settings = array(
+                'icon_style' => isset($display_settings['icon_style']) ? sanitize_text_field($display_settings['icon_style']) : '',
+                'icon_size_preset' => isset($display_settings['icon_size_preset']) ? sanitize_text_field($display_settings['icon_size_preset']) : '',
+                'icon_size_custom' => isset($display_settings['icon_size_custom']) ? absint($display_settings['icon_size_custom']) : '',
+                'gap_preset' => isset($display_settings['gap_preset']) ? sanitize_text_field($display_settings['gap_preset']) : '',
+                'gap_custom' => isset($display_settings['gap_custom']) ? absint($display_settings['gap_custom']) : '',
+                'layout_type' => isset($display_settings['layout_type']) ? sanitize_text_field($display_settings['layout_type']) : '',
+                'grid_columns' => isset($display_settings['grid_columns']) ? absint($display_settings['grid_columns']) : '',
+                'use_custom_colors' => isset($display_settings['use_custom_colors']) ? true : false,
+                'colors' => array(
+                    'primary' => isset($display_settings['colors']['primary']) ? sanitize_hex_color($display_settings['colors']['primary']) : '',
+                    'secondary' => isset($display_settings['colors']['secondary']) ? sanitize_hex_color($display_settings['colors']['secondary']) : '',
+                    'hover_primary' => isset($display_settings['colors']['hover_primary']) ? sanitize_hex_color($display_settings['colors']['hover_primary']) : '',
+                    'hover_secondary' => isset($display_settings['colors']['hover_secondary']) ? sanitize_hex_color($display_settings['colors']['hover_secondary']) : '',
+                ),
+            );
+
+            update_post_meta($post_id, '_sky_social_display_settings', $sanitized_settings);
         }
     }
 }

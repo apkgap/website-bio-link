@@ -291,6 +291,20 @@ class WBL_Social_Config
                 'svg_icon'   => 'shopee',
                 'color'      => '#EE4D2D',
             ),
+            array(
+                'label'      => 'Threads',
+                'slug'       => 'threads',
+                'icon_class' => 'fa-brands fa-threads',
+                'svg_icon'   => 'threads',
+                'color'      => '#000000',
+            ),
+            array(
+                'label'      => 'Lemon8',
+                'slug'       => 'lemon8',
+                'icon_class' => 'fa-solid fa-lemon',
+                'svg_icon'   => 'lemon8',
+                'color'      => '#000000',
+            ),
         );
     }
 

@@ -118,6 +118,66 @@ class WBL_Social_Links_Widget extends \Elementor\Widget_Base
         );
 
         $this->add_responsive_control(
+            'layout_type',
+            array(
+                'label'   => __('Layout Type', 'website-bio-link'),
+                'type'    => \Elementor\Controls_Manager::SELECT,
+                'options' => array(
+                    'horizontal' => __('Horizontal (Flex Row)', 'website-bio-link'),
+                    'vertical'   => __('Vertical (Flex Column)', 'website-bio-link'),
+                    'inline'     => __('Inline', 'website-bio-link'),
+                    'grid'       => __('Grid', 'website-bio-link'),
+                ),
+                'default' => 'horizontal',
+                'selectors_dictionary' => array(
+                    'horizontal' => 'flex',
+                    'vertical'   => 'flex',
+                    'inline'     => 'inline-flex',
+                    'grid'       => 'grid',
+                ),
+                'selectors' => array(
+                    '{{WRAPPER}} .wbl-social-list' => 'display: {{VALUE}};',
+                ),
+            )
+        );
+
+        $this->add_responsive_control(
+            'flex_direction',
+            array(
+                'label'   => __('Direction', 'website-bio-link'),
+                'type'    => \Elementor\Controls_Manager::SELECT,
+                'options' => array(
+                    'row'    => __('Row', 'website-bio-link'),
+                    'column' => __('Column', 'website-bio-link'),
+                ),
+                'default' => 'row',
+                'selectors' => array(
+                    '{{WRAPPER}} .wbl-social-list' => 'flex-direction: {{VALUE}};',
+                ),
+                'condition' => array(
+                    'layout_type' => array('horizontal', 'vertical', 'inline'),
+                ),
+            )
+        );
+
+        $this->add_responsive_control(
+            'grid_columns',
+            array(
+                'label'      => __('Grid Columns', 'website-bio-link'),
+                'type'       => \Elementor\Controls_Manager::NUMBER,
+                'min'        => 1,
+                'max'        => 12,
+                'default'    => 3,
+                'selectors'  => array(
+                    '{{WRAPPER}} .wbl-social-list' => 'grid-template-columns: repeat({{VALUE}}, 1fr);',
+                ),
+                'condition' => array(
+                    'layout_type' => 'grid',
+                ),
+            )
+        );
+
+        $this->add_responsive_control(
             'align',
             array(
                 'label'   => __('Alignment', 'website-bio-link'),
@@ -144,13 +204,63 @@ class WBL_Social_Links_Widget extends \Elementor\Widget_Base
                 'selectors' => array(
                     '{{WRAPPER}} .wbl-social-list' => 'justify-content: {{VALUE}};',
                 ),
+                'condition' => array(
+                    'layout_type!' => 'grid',
+                ),
+            )
+        );
+
+        $this->add_responsive_control(
+            'grid_align',
+            array(
+                'label'   => __('Grid Alignment', 'website-bio-link'),
+                'type'    => \Elementor\Controls_Manager::SELECT,
+                'options' => array(
+                    'start'  => __('Start', 'website-bio-link'),
+                    'center' => __('Center', 'website-bio-link'),
+                    'end'    => __('End', 'website-bio-link'),
+                ),
+                'default' => 'start',
+                'selectors' => array(
+                    '{{WRAPPER}} .wbl-social-list' => 'justify-items: {{VALUE}};',
+                ),
+                'condition' => array(
+                    'layout_type' => 'grid',
+                ),
+            )
+        );
+
+        $this->add_responsive_control(
+            'icon_size_preset',
+            array(
+                'label'   => __('Icon Size Preset', 'website-bio-link'),
+                'type'    => \Elementor\Controls_Manager::SELECT,
+                'options' => array(
+                    'custom' => __('Custom', 'website-bio-link'),
+                    'small'  => __('Small (16px)', 'website-bio-link'),
+                    'medium' => __('Medium (20px)', 'website-bio-link'),
+                    'large'  => __('Large (28px)', 'website-bio-link'),
+                    'xlarge' => __('Extra Large (36px)', 'website-bio-link'),
+                ),
+                'default' => 'custom',
+                'description' => __('Choose a preset size or select Custom to use slider below', 'website-bio-link'),
+                'selectors_dictionary' => array(
+                    'small'  => '16px',
+                    'medium' => '20px',
+                    'large'  => '28px',
+                    'xlarge' => '36px',
+                ),
+                'selectors' => array(
+                    '{{WRAPPER}} .wbl-social-icon-wrapper i' => 'font-size: {{VALUE}};',
+                    '{{WRAPPER}} .wbl-social-icon-wrapper svg' => 'width: {{VALUE}}; height: {{VALUE}};',
+                ),
             )
         );
 
         $this->add_responsive_control(
             'icon_size',
             array(
-                'label'      => __('Icon Size', 'website-bio-link'),
+                'label'      => __('Custom Icon Size', 'website-bio-link'),
                 'type'       => \Elementor\Controls_Manager::SLIDER,
                 'size_units' => array('px', 'em', 'rem'),
                 'range'      => array(
@@ -170,6 +280,9 @@ class WBL_Social_Links_Widget extends \Elementor\Widget_Base
                 'selectors' => array(
                     '{{WRAPPER}} .wbl-social-icon-wrapper i' => 'font-size: {{SIZE}}{{UNIT}};',
                     '{{WRAPPER}} .wbl-social-icon-wrapper svg' => 'width: {{SIZE}}{{UNIT}}; height: {{SIZE}}{{UNIT}};',
+                ),
+                'condition' => array(
+                    'icon_size_preset' => 'custom',
                 ),
             )
         );
@@ -197,9 +310,35 @@ class WBL_Social_Links_Widget extends \Elementor\Widget_Base
         );
 
         $this->add_responsive_control(
+            'gap_preset',
+            array(
+                'label'   => __('Gap Preset', 'website-bio-link'),
+                'type'    => \Elementor\Controls_Manager::SELECT,
+                'options' => array(
+                    'custom' => __('Custom', 'website-bio-link'),
+                    'small'  => __('Small (8px)', 'website-bio-link'),
+                    'medium' => __('Medium (16px)', 'website-bio-link'),
+                    'large'  => __('Large (24px)', 'website-bio-link'),
+                    'xlarge' => __('Extra Large (32px)', 'website-bio-link'),
+                ),
+                'default' => 'custom',
+                'description' => __('Choose a preset gap or select Custom to use slider below', 'website-bio-link'),
+                'selectors_dictionary' => array(
+                    'small'  => '8px',
+                    'medium' => '16px',
+                    'large'  => '24px',
+                    'xlarge' => '32px',
+                ),
+                'selectors' => array(
+                    '{{WRAPPER}} .wbl-social-list' => 'gap: {{VALUE}};',
+                ),
+            )
+        );
+
+        $this->add_responsive_control(
             'gap',
             array(
-                'label'      => __('Gap Between Icons', 'website-bio-link'),
+                'label'      => __('Custom Gap Between Icons', 'website-bio-link'),
                 'type'       => \Elementor\Controls_Manager::SLIDER,
                 'size_units' => array('px', 'em'),
                 'range'      => array(
@@ -218,6 +357,9 @@ class WBL_Social_Links_Widget extends \Elementor\Widget_Base
                 ),
                 'selectors' => array(
                     '{{WRAPPER}} .wbl-social-list' => 'gap: {{SIZE}}{{UNIT}};',
+                ),
+                'condition' => array(
+                    'gap_preset' => 'custom',
                 ),
             )
         );
@@ -254,6 +396,22 @@ class WBL_Social_Links_Widget extends \Elementor\Widget_Base
         );
 
         $this->add_control(
+            'color_source',
+            array(
+                'label'   => __('Color Source', 'website-bio-link'),
+                'type'    => \Elementor\Controls_Manager::SELECT,
+                'options' => array(
+                    'brand'    => __('Brand Colors (Official Platform Colors)', 'website-bio-link'),
+                    'settings' => __('Default Colors (From Settings)', 'website-bio-link'),
+                    'custom'   => __('Custom Colors (Override All)', 'website-bio-link'),
+                ),
+                'default' => 'brand',
+                'description' => __('Priority: Custom > Settings > Brand. Choose your color source.', 'website-bio-link'),
+                'separator' => 'before',
+            )
+        );
+
+        $this->add_control(
             'use_brand_colors',
             array(
                 'label'        => __('Use Brand Colors', 'website-bio-link'),
@@ -262,7 +420,7 @@ class WBL_Social_Links_Widget extends \Elementor\Widget_Base
                 'label_off'    => __('No', 'website-bio-link'),
                 'return_value' => 'yes',
                 'default'      => 'yes',
-                'description'  => __('Use official brand colors for each platform. Turn off to customize colors manually.', 'website-bio-link'),
+                'description'  => __('DEPRECATED: Use "Color Source" above instead. This will be removed in future versions.', 'website-bio-link'),
                 'separator'    => 'after',
             )
         );
@@ -289,10 +447,32 @@ class WBL_Social_Links_Widget extends \Elementor\Widget_Base
         $this->start_controls_section(
             'section_icon_colors',
             array(
-                'label'     => __('Icon Colors', 'website-bio-link'),
+                'label'     => __('Custom Icon Colors', 'website-bio-link'),
                 'tab'       => \Elementor\Controls_Manager::TAB_STYLE,
                 'condition' => array(
-                    'use_brand_colors!' => 'yes',
+                    'color_source' => 'custom',
+                ),
+            )
+        );
+
+        $this->add_control(
+            'custom_colors_note',
+            array(
+                'type' => \Elementor\Controls_Manager::RAW_HTML,
+                'raw'  => __('<strong>💡 Smart Color System:</strong> Color fields will adapt based on your selected Icon Style. Each style has different color requirements.', 'website-bio-link'),
+                'content_classes' => 'elementor-panel-alert elementor-panel-alert-info',
+            )
+        );
+
+        // Warning when no icon style selected
+        $this->add_control(
+            'no_style_warning',
+            array(
+                'type' => \Elementor\Controls_Manager::RAW_HTML,
+                'raw'  => __('<strong>⚠️ Note:</strong> Please select an Icon Style in the "Style Preset" section above to configure custom colors.', 'website-bio-link'),
+                'content_classes' => 'elementor-panel-alert elementor-panel-alert-warning',
+                'condition' => array(
+                    'icon_style' => '',
                 ),
             )
         );
@@ -307,19 +487,31 @@ class WBL_Social_Links_Widget extends \Elementor\Widget_Base
             )
         );
 
+        // Circle & Rounded - Primary Color (Background)
+        $this->add_control(
+            'circle_rounded_description',
+            array(
+                'type' => \Elementor\Controls_Manager::RAW_HTML,
+                'raw'  => __('<strong>Circle & Rounded Square:</strong><br>Primary = Background, Secondary = Icon Color', 'website-bio-link'),
+                'content_classes' => 'elementor-descriptor',
+                'condition' => array(
+                    'icon_style' => array('circle', 'rounded'),
+                ),
+            )
+        );
+
         $this->add_control(
             'icon_primary_color',
             array(
-                'label'     => __('Primary Color', 'website-bio-link'),
+                'label'     => __('Primary Color (Background)', 'website-bio-link'),
                 'type'      => \Elementor\Controls_Manager::COLOR,
                 'default'   => '#3b82f6',
                 'selectors' => array(
                     '{{WRAPPER}} .wbl-style-circle .wbl-social-icon-wrapper' => 'background-color: {{VALUE}};',
                     '{{WRAPPER}} .wbl-style-rounded .wbl-social-icon-wrapper' => 'background-color: {{VALUE}};',
-                    '{{WRAPPER}} .wbl-style-flat .wbl-social-icon-wrapper' => 'border-color: {{VALUE}}; color: {{VALUE}};',
-                    '{{WRAPPER}} .wbl-style-minimal .wbl-social-icon-wrapper' => 'color: {{VALUE}};',
-                    '{{WRAPPER}} .wbl-style-glass .wbl-social-icon-wrapper' => 'color: {{VALUE}};',
-                    '{{WRAPPER}} .wbl-style-gradient .wbl-social-icon-wrapper' => 'background: linear-gradient(135deg, {{VALUE}} 0%, {{VALUE}}cc 100%);',
+                ),
+                'condition' => array(
+                    'icon_style' => array('circle', 'rounded'),
                 ),
             )
         );
@@ -333,18 +525,101 @@ class WBL_Social_Links_Widget extends \Elementor\Widget_Base
                 'selectors' => array(
                     '{{WRAPPER}} .wbl-style-circle .wbl-social-icon-wrapper' => 'color: {{VALUE}};',
                     '{{WRAPPER}} .wbl-style-rounded .wbl-social-icon-wrapper' => 'color: {{VALUE}};',
-                    '{{WRAPPER}} .wbl-style-gradient .wbl-social-icon-wrapper' => 'color: {{VALUE}};',
                 ),
                 'condition' => array(
-                    'icon_style' => array('circle', 'rounded', 'gradient'),
+                    'icon_style' => array('circle', 'rounded'),
+                ),
+            )
+        );
+
+        // Flat - Primary Color (Border & Icon)
+        $this->add_control(
+            'flat_description',
+            array(
+                'type' => \Elementor\Controls_Manager::RAW_HTML,
+                'raw'  => __('<strong>Flat Outline:</strong><br>Primary = Border & Icon Color', 'website-bio-link'),
+                'content_classes' => 'elementor-descriptor',
+                'condition' => array(
+                    'icon_style' => 'flat',
                 ),
             )
         );
 
         $this->add_control(
-            'icon_bg_color',
+            'flat_primary_color',
             array(
-                'label'     => __('Background Color', 'website-bio-link'),
+                'label'     => __('Primary Color (Border & Icon)', 'website-bio-link'),
+                'type'      => \Elementor\Controls_Manager::COLOR,
+                'default'   => '#3b82f6',
+                'selectors' => array(
+                    '{{WRAPPER}} .wbl-style-flat .wbl-social-icon-wrapper' => 'border-color: {{VALUE}}; color: {{VALUE}};',
+                ),
+                'condition' => array(
+                    'icon_style' => 'flat',
+                ),
+            )
+        );
+
+        // Minimal - Primary Color (Icon only)
+        $this->add_control(
+            'minimal_description',
+            array(
+                'type' => \Elementor\Controls_Manager::RAW_HTML,
+                'raw'  => __('<strong>Minimal:</strong><br>Primary = Icon Color only', 'website-bio-link'),
+                'content_classes' => 'elementor-descriptor',
+                'condition' => array(
+                    'icon_style' => 'minimal',
+                ),
+            )
+        );
+
+        $this->add_control(
+            'minimal_primary_color',
+            array(
+                'label'     => __('Primary Color (Icon)', 'website-bio-link'),
+                'type'      => \Elementor\Controls_Manager::COLOR,
+                'default'   => '#3b82f6',
+                'selectors' => array(
+                    '{{WRAPPER}} .wbl-style-minimal .wbl-social-icon-wrapper' => 'color: {{VALUE}};',
+                ),
+                'condition' => array(
+                    'icon_style' => 'minimal',
+                ),
+            )
+        );
+
+        // Glassmorphism - Icon & Background
+        $this->add_control(
+            'glass_description',
+            array(
+                'type' => \Elementor\Controls_Manager::RAW_HTML,
+                'raw'  => __('<strong>Glassmorphism:</strong><br>Primary = Icon, Secondary = Background (use rgba)', 'website-bio-link'),
+                'content_classes' => 'elementor-descriptor',
+                'condition' => array(
+                    'icon_style' => 'glass',
+                ),
+            )
+        );
+
+        $this->add_control(
+            'glass_primary_color',
+            array(
+                'label'     => __('Primary Color (Icon)', 'website-bio-link'),
+                'type'      => \Elementor\Controls_Manager::COLOR,
+                'default'   => '#ffffff',
+                'selectors' => array(
+                    '{{WRAPPER}} .wbl-style-glass .wbl-social-icon-wrapper' => 'color: {{VALUE}};',
+                ),
+                'condition' => array(
+                    'icon_style' => 'glass',
+                ),
+            )
+        );
+
+        $this->add_control(
+            'glass_bg_color',
+            array(
+                'label'     => __('Secondary Color (Background)', 'website-bio-link'),
                 'type'      => \Elementor\Controls_Manager::COLOR,
                 'default'   => 'rgba(255, 255, 255, 0.15)',
                 'selectors' => array(
@@ -352,6 +627,49 @@ class WBL_Social_Links_Widget extends \Elementor\Widget_Base
                 ),
                 'condition' => array(
                     'icon_style' => 'glass',
+                ),
+            )
+        );
+
+        // Gradient - Start & End Colors
+        $this->add_control(
+            'gradient_description',
+            array(
+                'type' => \Elementor\Controls_Manager::RAW_HTML,
+                'raw'  => __('<strong>Gradient:</strong><br>Primary = Start Color, Secondary = End Color', 'website-bio-link'),
+                'content_classes' => 'elementor-descriptor',
+                'condition' => array(
+                    'icon_style' => 'gradient',
+                ),
+            )
+        );
+
+        $this->add_control(
+            'gradient_start_color',
+            array(
+                'label'     => __('Primary Color (Gradient Start)', 'website-bio-link'),
+                'type'      => \Elementor\Controls_Manager::COLOR,
+                'default'   => '#3b82f6',
+                'selectors' => array(
+                    '{{WRAPPER}} .wbl-style-gradient .wbl-social-icon-wrapper' => 'background: linear-gradient(135deg, {{VALUE}} 0%, {{icon_gradient_end_color.VALUE}} 100%);',
+                ),
+                'condition' => array(
+                    'icon_style' => 'gradient',
+                ),
+            )
+        );
+
+        $this->add_control(
+            'gradient_end_color',
+            array(
+                'label'     => __('Secondary Color (Gradient End)', 'website-bio-link'),
+                'type'      => \Elementor\Controls_Manager::COLOR,
+                'default'   => '#8b5cf6',
+                'selectors' => array(
+                    '{{WRAPPER}} .wbl-style-gradient .wbl-social-icon-wrapper' => 'background: linear-gradient(135deg, {{gradient_start_color.VALUE}} 0%, {{VALUE}} 100%);',
+                ),
+                'condition' => array(
+                    'icon_style' => 'gradient',
                 ),
             )
         );
@@ -366,19 +684,19 @@ class WBL_Social_Links_Widget extends \Elementor\Widget_Base
             )
         );
 
+        // Circle & Rounded - Hover Colors
         $this->add_control(
             'icon_primary_color_hover',
             array(
-                'label'     => __('Primary Color', 'website-bio-link'),
+                'label'     => __('Hover Primary (Background)', 'website-bio-link'),
                 'type'      => \Elementor\Controls_Manager::COLOR,
                 'default'   => '#2563eb',
                 'selectors' => array(
                     '{{WRAPPER}} .wbl-style-circle .wbl-social-link:hover .wbl-social-icon-wrapper' => 'background-color: {{VALUE}};',
                     '{{WRAPPER}} .wbl-style-rounded .wbl-social-link:hover .wbl-social-icon-wrapper' => 'background-color: {{VALUE}};',
-                    '{{WRAPPER}} .wbl-style-flat .wbl-social-link:hover .wbl-social-icon-wrapper' => 'border-color: {{VALUE}}; background-color: {{VALUE}}; color: #fff;',
-                    '{{WRAPPER}} .wbl-style-minimal .wbl-social-link:hover .wbl-social-icon-wrapper' => 'color: {{VALUE}};',
-                    '{{WRAPPER}} .wbl-style-glass .wbl-social-link:hover .wbl-social-icon-wrapper' => 'color: {{VALUE}};',
-                    '{{WRAPPER}} .wbl-style-gradient .wbl-social-link:hover .wbl-social-icon-wrapper' => 'background: linear-gradient(135deg, {{VALUE}} 0%, {{VALUE}}cc 100%);',
+                ),
+                'condition' => array(
+                    'icon_style' => array('circle', 'rounded'),
                 ),
             )
         );
@@ -386,24 +704,86 @@ class WBL_Social_Links_Widget extends \Elementor\Widget_Base
         $this->add_control(
             'icon_secondary_color_hover',
             array(
-                'label'     => __('Secondary Color (Icon)', 'website-bio-link'),
+                'label'     => __('Hover Secondary (Icon)', 'website-bio-link'),
                 'type'      => \Elementor\Controls_Manager::COLOR,
                 'default'   => '#ffffff',
                 'selectors' => array(
                     '{{WRAPPER}} .wbl-style-circle .wbl-social-link:hover .wbl-social-icon-wrapper' => 'color: {{VALUE}};',
                     '{{WRAPPER}} .wbl-style-rounded .wbl-social-link:hover .wbl-social-icon-wrapper' => 'color: {{VALUE}};',
-                    '{{WRAPPER}} .wbl-style-gradient .wbl-social-link:hover .wbl-social-icon-wrapper' => 'color: {{VALUE}};',
                 ),
                 'condition' => array(
-                    'icon_style' => array('circle', 'rounded', 'gradient'),
+                    'icon_style' => array('circle', 'rounded'),
+                ),
+            )
+        );
+
+        // Flat - Hover Colors
+        $this->add_control(
+            'flat_hover_primary_color',
+            array(
+                'label'     => __('Hover Primary (Background)', 'website-bio-link'),
+                'type'      => \Elementor\Controls_Manager::COLOR,
+                'default'   => '#3b82f6',
+                'selectors' => array(
+                    '{{WRAPPER}} .wbl-style-flat .wbl-social-link:hover .wbl-social-icon-wrapper' => 'background-color: {{VALUE}}; border-color: {{VALUE}};',
+                ),
+                'condition' => array(
+                    'icon_style' => 'flat',
                 ),
             )
         );
 
         $this->add_control(
-            'icon_bg_color_hover',
+            'flat_hover_secondary_color',
             array(
-                'label'     => __('Background Color', 'website-bio-link'),
+                'label'     => __('Hover Secondary (Icon)', 'website-bio-link'),
+                'type'      => \Elementor\Controls_Manager::COLOR,
+                'default'   => '#ffffff',
+                'selectors' => array(
+                    '{{WRAPPER}} .wbl-style-flat .wbl-social-link:hover .wbl-social-icon-wrapper' => 'color: {{VALUE}};',
+                ),
+                'condition' => array(
+                    'icon_style' => 'flat',
+                ),
+            )
+        );
+
+        // Minimal - Hover Color
+        $this->add_control(
+            'minimal_hover_color',
+            array(
+                'label'     => __('Hover Primary (Icon)', 'website-bio-link'),
+                'type'      => \Elementor\Controls_Manager::COLOR,
+                'default'   => '#2563eb',
+                'selectors' => array(
+                    '{{WRAPPER}} .wbl-style-minimal .wbl-social-link:hover .wbl-social-icon-wrapper' => 'color: {{VALUE}};',
+                ),
+                'condition' => array(
+                    'icon_style' => 'minimal',
+                ),
+            )
+        );
+
+        // Glass - Hover Colors
+        $this->add_control(
+            'glass_hover_primary_color',
+            array(
+                'label'     => __('Hover Primary (Icon)', 'website-bio-link'),
+                'type'      => \Elementor\Controls_Manager::COLOR,
+                'default'   => '#ffffff',
+                'selectors' => array(
+                    '{{WRAPPER}} .wbl-style-glass .wbl-social-link:hover .wbl-social-icon-wrapper' => 'color: {{VALUE}};',
+                ),
+                'condition' => array(
+                    'icon_style' => 'glass',
+                ),
+            )
+        );
+
+        $this->add_control(
+            'glass_hover_bg_color',
+            array(
+                'label'     => __('Hover Secondary (Background)', 'website-bio-link'),
                 'type'      => \Elementor\Controls_Manager::COLOR,
                 'default'   => 'rgba(255, 255, 255, 0.25)',
                 'selectors' => array(
@@ -411,6 +791,37 @@ class WBL_Social_Links_Widget extends \Elementor\Widget_Base
                 ),
                 'condition' => array(
                     'icon_style' => 'glass',
+                ),
+            )
+        );
+
+        // Gradient - Hover Colors
+        $this->add_control(
+            'gradient_hover_start_color',
+            array(
+                'label'     => __('Hover Primary (Gradient Start)', 'website-bio-link'),
+                'type'      => \Elementor\Controls_Manager::COLOR,
+                'default'   => '#2563eb',
+                'selectors' => array(
+                    '{{WRAPPER}} .wbl-style-gradient .wbl-social-link:hover .wbl-social-icon-wrapper' => 'background: linear-gradient(135deg, {{VALUE}} 0%, {{gradient_hover_end_color.VALUE}} 100%);',
+                ),
+                'condition' => array(
+                    'icon_style' => 'gradient',
+                ),
+            )
+        );
+
+        $this->add_control(
+            'gradient_hover_end_color',
+            array(
+                'label'     => __('Hover Secondary (Gradient End)', 'website-bio-link'),
+                'type'      => \Elementor\Controls_Manager::COLOR,
+                'default'   => '#7c3aed',
+                'selectors' => array(
+                    '{{WRAPPER}} .wbl-style-gradient .wbl-social-link:hover .wbl-social-icon-wrapper' => 'background: linear-gradient(135deg, {{gradient_hover_start_color.VALUE}} 0%, {{VALUE}} 100%);',
+                ),
+                'condition' => array(
+                    'icon_style' => 'gradient',
                 ),
             )
         );
@@ -432,7 +843,7 @@ class WBL_Social_Links_Widget extends \Elementor\Widget_Base
             )
         );
 
-        $this->add_control(
+        $this->add_responsive_control(
             'icon_border_radius',
             array(
                 'label'      => __('Border Radius', 'website-bio-link'),
@@ -640,8 +1051,7 @@ class WBL_Social_Links_Widget extends \Elementor\Widget_Base
                 'label'     => __('Gradient Settings', 'website-bio-link'),
                 'tab'       => \Elementor\Controls_Manager::TAB_STYLE,
                 'condition' => array(
-                    'icon_style'        => 'gradient',
-                    'use_brand_colors!' => 'yes',
+                    'icon_style' => 'gradient',
                 ),
             )
         );
@@ -862,7 +1272,7 @@ class WBL_Social_Links_Widget extends \Elementor\Widget_Base
 
         $wrapper_classes = array(
             'wbl-social-widget',
-            'wbl-social-style-' . $icon_style,
+            'wbl-style-' . $icon_style,
             'wbl-hover-' . $hover_animation,
         );
 
