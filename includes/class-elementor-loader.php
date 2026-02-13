@@ -59,28 +59,6 @@ class WBL_Elementor_Widgets
             return;
         }
 
-        // Include test widget file with error checking
-        $test_widget_file = WBL_SOCIAL_PLUGIN_DIR . 'elementor-widgets/test-widget.php';
-        if (!file_exists($test_widget_file)) {
-            return;
-        }
-
-        require_once $test_widget_file;
-
-        // Check if test widget class exists before registering
-        if (!class_exists('\WBL_Test_Widget')) {
-            return;
-        }
-
-        // Register test widget with error handling
-        try {
-            $widget_instance = new \WBL_Test_Widget();
-            $widgets_manager->register($widget_instance);
-            // Widget registered successfully
-        } catch (\Throwable $e) {
-            // Failed to register test widget
-        }
-
         // Social links widget
         $widget_file = WBL_SOCIAL_PLUGIN_DIR . 'elementor-widgets/social-links-widget.php';
         if (file_exists($widget_file)) {
@@ -89,9 +67,9 @@ class WBL_Elementor_Widgets
                 try {
                     $widget_instance = new \WBL_Social_Links_Widget();
                     $widgets_manager->register($widget_instance);
-                    // Widget registered successfully
                 } catch (\Throwable $e) {
                     // Failed to register social links widget
+                    error_log('Website Bio Link: Failed to register social links widget - ' . $e->getMessage());
                 }
             }
         }

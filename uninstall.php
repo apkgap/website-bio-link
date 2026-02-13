@@ -32,6 +32,7 @@ function wbl_social_uninstall()
     foreach ($social_sets as $set) {
         // Delete post meta
         delete_post_meta($set->ID, '_wbl_social_items');
+        delete_post_meta($set->ID, '_wbl_social_display_settings');
 
         // Delete post
         wp_delete_post($set->ID, true);
@@ -44,6 +45,7 @@ function wbl_social_uninstall()
 
     // Delete transients
     delete_transient('wbl_social_cache');
+    delete_transient('wbl_total_links_count');
 
     // Clear any scheduled hooks
     wp_clear_scheduled_hook('wbl_social_daily_cleanup');

@@ -785,5 +785,8 @@ class WBL_Social_Meta_Box
 
             update_post_meta($post_id, '_wbl_social_display_settings', $sanitized_settings);
         }
+
+        // Clear cached total links count
+        delete_transient('wbl_total_links_count');
     }
 }

@@ -112,9 +112,19 @@ final class Website_Bio_Link_Social
      */
     private function init_hooks()
     {
+        // Load text domain early to prevent warnings
+        add_action('plugins_loaded', array($this, 'load_textdomain'), 5);
         add_action('init', array($this, 'init'), 0);
         add_action('admin_enqueue_scripts', array($this, 'admin_scripts'));
         add_action('wp_enqueue_scripts', array($this, 'frontend_scripts'));
+    }
+
+    /**
+     * Load plugin text domain
+     */
+    public function load_textdomain()
+    {
+        load_plugin_textdomain('website-bio-link', false, dirname(plugin_basename(__FILE__)) . '/languages');
     }
 
     /**
@@ -122,8 +132,6 @@ final class Website_Bio_Link_Social
      */
     public function init()
     {
-        // Load text domain
-        load_plugin_textdomain('website-bio-link', false, dirname(plugin_basename(__FILE__)) . '/languages');
 
         // Initialize classes with error checking
         $classes_to_init = array(
@@ -224,54 +232,12 @@ final class Website_Bio_Link_Social
      */
     public function frontend_scripts()
     {
-        // Get settings to check if we should load external assets
-        $settings = $this->get_settings();
-
-        // Enqueue FontAwesome 6 if enabled (fallback for SVG icons)
-        if (!empty($settings['enable_fontawesome'])) {
-            wp_enqueue_style(
-                'font-awesome-6',
-                'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css',
-                array(),
-                '6.5.1'
-            );
-        }
-
-        // Enqueue TailwindCSS CDN if enabled
-        if (!empty($settings['enable_tailwind'])) {
-            wp_enqueue_style(
-                'tailwindcss',
-                'https://cdn.jsdelivr.net/npm/tailwindcss@3.4.1/dist/tailwind.min.css',
-                array(),
-                '3.4.1'
-            );
-        }
-
-        // Enqueue plugin styles
+        // Enqueue plugin styles only (no external CDN dependencies)
         wp_enqueue_style(
             'wbl-social-frontend',
             WBL_SOCIAL_PLUGIN_URL . 'assets/css/style.css',
             array(),
             WBL_SOCIAL_VERSION
-        );
-    }
-
-    /**
-     * Get plugin settings
-     */
-    private function get_settings()
-    {
-        if (class_exists('WBL_Settings')) {
-            $settings_instance = WBL_Settings::instance();
-            if (method_exists($settings_instance, 'get_settings')) {
-                return $settings_instance->get_settings();
-            }
-        }
-
-        // Return defaults if settings class not available
-        return array(
-            'enable_fontawesome' => true,
-            'enable_tailwind' => true,
         );
     }
 }

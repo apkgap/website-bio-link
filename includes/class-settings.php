@@ -124,31 +124,7 @@ class WBL_Settings
             'wbl_general_section'
         );
 
-        // Assets Settings Section
-        add_settings_section(
-            'wbl_assets_section',
-            __('Assets Settings', 'website-bio-link'),
-            array($this, 'render_assets_section'),
-            'wbl-social-settings'
-        );
 
-        // Enable FontAwesome
-        add_settings_field(
-            'enable_fontawesome',
-            __('Load FontAwesome', 'website-bio-link'),
-            array($this, 'render_fontawesome_field'),
-            'wbl-social-settings',
-            'wbl_assets_section'
-        );
-
-        // Enable TailwindCSS
-        add_settings_field(
-            'enable_tailwind',
-            __('Load TailwindCSS', 'website-bio-link'),
-            array($this, 'render_tailwind_field'),
-            'wbl-social-settings',
-            'wbl_assets_section'
-        );
 
         // Advanced Settings Section
         add_settings_section(
@@ -194,8 +170,7 @@ class WBL_Settings
             }
         }
 
-        $sanitized['enable_fontawesome'] = isset($input['enable_fontawesome']) ? true : false;
-        $sanitized['enable_tailwind'] = isset($input['enable_tailwind']) ? true : false;
+
         $sanitized['delete_on_uninstall'] = isset($input['delete_on_uninstall']) ? true : false;
 
         return $sanitized;
@@ -218,8 +193,7 @@ class WBL_Settings
                 'glass' => array('primary' => '#3b82f6', 'secondary' => 'rgba(255,255,255,0.15)', 'hover_primary' => '#2563eb', 'hover_secondary' => 'rgba(255,255,255,0.25)'),
                 'gradient' => array('primary' => '#3b82f6', 'secondary' => '#8b5cf6', 'hover_primary' => '#2563eb', 'hover_secondary' => '#7c3aed'),
             ),
-            'enable_fontawesome' => true,
-            'enable_tailwind' => true,
+
             'delete_on_uninstall' => true,
         );
 
@@ -311,10 +285,7 @@ class WBL_Settings
         echo '<p>' . esc_html__('Configure default settings for social links display.', 'website-bio-link') . '</p>';
     }
 
-    public function render_assets_section()
-    {
-        echo '<p>' . esc_html__('Manage external assets loading. Disable if your theme already includes these libraries.', 'website-bio-link') . '</p>';
-    }
+
 
     public function render_advanced_section()
     {
@@ -463,31 +434,7 @@ class WBL_Settings
     <?php
     }
 
-    public function render_fontawesome_field()
-    {
-        $settings = $this->get_settings();
-        $value = $settings['enable_fontawesome'];
-    ?>
-        <label>
-            <input type="checkbox" name="<?php echo esc_attr($this->option_name); ?>[enable_fontawesome]" value="1" <?php checked($value, true); ?> />
-            <?php esc_html_e('Load FontAwesome 6 from CDN', 'website-bio-link'); ?>
-        </label>
-        <p class="description"><?php esc_html_e('Disable if your theme already includes FontAwesome.', 'website-bio-link'); ?></p>
-    <?php
-    }
 
-    public function render_tailwind_field()
-    {
-        $settings = $this->get_settings();
-        $value = $settings['enable_tailwind'];
-    ?>
-        <label>
-            <input type="checkbox" name="<?php echo esc_attr($this->option_name); ?>[enable_tailwind]" value="1" <?php checked($value, true); ?> />
-            <?php esc_html_e('Load TailwindCSS from CDN', 'website-bio-link'); ?>
-        </label>
-        <p class="description"><?php esc_html_e('Disable if your theme already includes TailwindCSS.', 'website-bio-link'); ?></p>
-    <?php
-    }
 
     public function render_delete_field()
     {
@@ -586,6 +533,7 @@ class WBL_Settings
                 font-size: 14px;
                 font-weight: 600;
                 color: #1d2327;
+                font-size: 14px;
             }
             .wbl-info-box ul {
                 margin: 0;
@@ -664,16 +612,42 @@ class WBL_Settings
 
     /**
      * Count total links
+     * Cached for 1 hour to prevent expensive queries
      */
     private function count_total_links()
     {
+        // Check cache first
+        $cached_count = get_transient('wbl_total_links_count');
+        if ($cached_count !== false) {
+            return intval($cached_count);
+        }
+
         global $wpdb;
 
-        $query = "SELECT SUM(CHAR_LENGTH(meta_value) - CHAR_LENGTH(REPLACE(meta_value, '\"platform\"', ''))) / CHAR_LENGTH('\"platform\"') as total
-                  FROM {$wpdb->postmeta}
-                  WHERE meta_key = '_wbl_social_items'";
+        // More efficient query - get all meta values and count in PHP
+        $query = $wpdb->prepare(
+            "SELECT meta_value 
+             FROM {$wpdb->postmeta} 
+             WHERE meta_key = %s 
+             LIMIT 100",
+            '_wbl_social_items'
+        );
 
-        $result = $wpdb->get_var($query);
-        return $result ? intval($result) : 0;
+        $results = $wpdb->get_col($query);
+        $total = 0;
+
+        if ($results) {
+            foreach ($results as $meta_value) {
+                $items = maybe_unserialize($meta_value);
+                if (is_array($items)) {
+                    $total += count($items);
+                }
+            }
+        }
+
+        // Cache for 1 hour
+        set_transient('wbl_total_links_count', $total, HOUR_IN_SECONDS);
+
+        return $total;
     }
 }

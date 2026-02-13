@@ -121,6 +121,11 @@ class WBL_Social_Renderer
         <ul class="<?php echo esc_attr(implode(' ', $container_classes)); ?>">
             <?php foreach ($social_items as $item) : ?>
                 <?php
+                if (!class_exists('WBL_Social_Config')) {
+                    // Fallback or prevent fatal error if config not loaded
+                    continue;
+                }
+
                 $platform_data = WBL_Social_Config::get_platform_by_slug($item['platform']);
                 if (! $platform_data || !is_array($platform_data)) {
                     continue;
@@ -139,12 +144,14 @@ class WBL_Social_Renderer
                 $icon_html = '';
                 if ($icon_type === 'svg' && isset($platform_data['svg_icon'])) {
                     // Use SVG icon
-                    $svg_icons = WBL_SVG_Icons::instance();
-                    $icon_html = $svg_icons->get_svg_icon($platform_data['svg_icon'], array(
-                        'class' => 'wbl-social-icon',
-                        'width' => '24',
-                        'height' => '24',
-                    ));
+                    if (class_exists('WBL_SVG_Icons')) {
+                        $svg_icons = WBL_SVG_Icons::instance();
+                        $icon_html = $svg_icons->get_svg_icon($platform_data['svg_icon'], array(
+                            'class' => 'wbl-social-icon',
+                            'width' => '24',
+                            'height' => '24',
+                        ));
+                    }
                 } elseif (isset($platform_data['icon_class'])) {
                     // Use FontAwesome as fallback
                     $icon_html = '<i class="' . esc_attr($platform_data['icon_class']) . ' wbl-social-icon" aria-hidden="true"></i>';
