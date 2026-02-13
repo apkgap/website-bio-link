@@ -4,7 +4,7 @@
  * Plugin Name: Website Bio Link
  * Plugin URI: https://example.com
  * Description: Create and manage social media link sets with Custom Post Type, Shortcodes, and Elementor Widget support.
- * Version: 1.0.0
+ * Version: 1.0.1
  * Author: Your Name
  * Author URI: https://example.com
  * Text Domain: website-bio-link
@@ -21,7 +21,7 @@ if (! defined('ABSPATH')) {
 }
 
 // Define plugin constants
-define('WBL_SOCIAL_VERSION', '1.0.0');
+define('WBL_SOCIAL_VERSION', '1.0.1');
 define('WBL_SOCIAL_PLUGIN_DIR', plugin_dir_path(__FILE__));
 define('WBL_SOCIAL_PLUGIN_URL', plugin_dir_url(__FILE__));
 define('WBL_SOCIAL_PLUGIN_FILE', __FILE__);
