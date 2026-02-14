@@ -33,6 +33,28 @@ class WBL_Social_Config
                 'color'      => '#1877F2',
             ),
             array(
+                'label'      => 'Line',
+                'slug'       => 'line',
+                'icon_class' => 'fa-brands fa-line',
+                'svg_icon'   => 'line',
+                'color'      => '#00C300',
+            ),
+            array(
+                'label'      => 'Shopee',
+                'slug'       => 'shopee',
+                'icon_class' => 'fa-brands fa-shopee',
+                'svg_icon'   => 'shopee',
+                'color'      => '#EE4D2D',
+            ),
+            array(
+                'label'      => 'Lazada',
+                'slug'       => 'lazada',
+                'icon_class' => 'fa-solid fa-shopping-cart',
+                'svg_icon'   => 'lazada',
+                'color'      => '#000080',
+            ),
+
+            array(
                 'label'      => 'Twitter / X',
                 'slug'       => 'twitter',
                 'icon_class' => 'fa-brands fa-x-twitter',
@@ -284,13 +306,7 @@ class WBL_Social_Config
                 'svg_icon'   => 'mastodon',
                 'color'      => '#6364FF',
             ),
-            array(
-                'label'      => 'Shopee',
-                'slug'       => 'shopee',
-                'icon_class' => 'fa-brands fa-shopee',
-                'svg_icon'   => 'shopee',
-                'color'      => '#EE4D2D',
-            ),
+
             array(
                 'label'      => 'Threads',
                 'slug'       => 'threads',
@@ -305,6 +321,36 @@ class WBL_Social_Config
                 'svg_icon'   => 'lemon8',
                 'color'      => '#000000',
             ),
+            array(
+                'label'      => 'Email',
+                'slug'       => 'email',
+                'icon_class' => 'fa-solid fa-envelope',
+                'svg_icon'   => 'email',
+                'color'      => '#EA4335',
+            ),
+            array(
+                'label'      => 'Phone',
+                'slug'       => 'phone',
+                'icon_class' => 'fa-solid fa-phone',
+                'svg_icon'   => 'phone',
+                'color'      => '#34A853',
+            ),
+            array(
+                'label'      => 'Website',
+                'slug'       => 'website',
+                'icon_class' => 'fa-solid fa-globe',
+                'svg_icon'   => 'website',
+                'color'      => '#6366F1',
+            ),
+
+            array(
+                'label'      => 'Messenger',
+                'slug'       => 'messenger',
+                'icon_class' => 'fa-brands fa-facebook-messenger',
+                'svg_icon'   => 'messenger',
+                'color'      => '#00B2FF',
+            ),
+
         );
     }
 

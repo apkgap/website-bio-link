@@ -178,6 +178,11 @@ class WBL_SVG_Icons
             'tumblr'     => 'tumblr',
             'vimeo'      => 'vimeo',
             'mastodon'   => 'mastodon',
+            'email'      => 'email',
+            'phone'      => 'phone',
+            'website'    => 'website',
+            'lazada'     => 'lazada',
+            'messenger'  => 'messenger',
         );
 
         return isset($mapping[$platform]) ? $mapping[$platform] : $platform;
