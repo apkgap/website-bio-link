@@ -1,0 +1,94 @@
+/**
+ * Social Links Widget Styles
+ */
+
+.wbl-social-list {
+    display: flex;
+    flex-wrap: wrap;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    gap: 1rem;
+}
+
+.wbl-social-item {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.wbl-social-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    text-decoration: none;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+}
+
+.wbl-social-icon-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    background-color: var(--brand-color, #3b82f6);
+    color: #ffffff;
+}
+
+.wbl-social-icon {
+    display: block;
+    width: 24px;
+    height: 24px;
+    fill: currentColor;
+}
+
+.wbl-social-label {
+    font-size: 16px;
+    font-weight: 500;
+    color: inherit;
+    transition: color 0.3s ease;
+}
+
+/* Style Variants (Basic resets if not handled by Elementor controls) */
+.wbl-social-style-circle .wbl-social-icon-wrapper {
+    border-radius: 50%;
+}
+
+.wbl-social-style-rounded .wbl-social-icon-wrapper {
+    border-radius: 0.75rem;
+}
+
+.wbl-social-style-flat .wbl-social-icon-wrapper {
+    background-color: transparent !important;
+    border: 2px solid var(--brand-color, #3b82f6);
+    color: var(--brand-color, #3b82f6);
+}
+
+.wbl-social-style-flat .wbl-social-link:hover .wbl-social-icon-wrapper {
+    background-color: var(--brand-color, #3b82f6) !important;
+    color: #ffffff !important;
+}
+
+.wbl-social-style-minimal .wbl-social-icon-wrapper {
+    background-color: transparent !important;
+    color: var(--brand-color, #3b82f6);
+}
+
+/* Hover Animations */
+.wbl-hover-grow .wbl-social-link:hover .wbl-social-icon-wrapper {
+    transform: scale(1.1);
+}
+
+.wbl-hover-shrink .wbl-social-link:hover .wbl-social-icon-wrapper {
+    transform: scale(0.9);
+}
+
+.wbl-hover-float .wbl-social-link:hover .wbl-social-icon-wrapper {
+    transform: translateY(-5px);
+}
+
+.wbl-hover-rotate .wbl-social-link:hover .wbl-social-icon-wrapper {
+    transform: rotate(360deg);
+}

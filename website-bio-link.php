@@ -239,6 +239,16 @@ final class Website_Bio_Link_Social
             array(),
             WBL_SOCIAL_VERSION
         );
+
+        // Register widget specific styles (will be loaded on demand by Elementor)
+        wp_register_style(
+            'wbl-social-links-widget',
+            WBL_SOCIAL_PLUGIN_URL . 'elementor-widgets/social-links/social-links-widget.css',
+            array('wbl-social-frontend'),
+            WBL_SOCIAL_VERSION
+        );
+
+
     }
 }
 

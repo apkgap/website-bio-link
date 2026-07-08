@@ -333,7 +333,7 @@ class WBL_Social_Config
                 'slug'       => 'phone',
                 'icon_class' => 'fa-solid fa-phone',
                 'svg_icon'   => 'phone',
-                'color'      => '#34A853',
+                'color'      => '#1271b6',
             ),
             array(
                 'label'      => 'Website',

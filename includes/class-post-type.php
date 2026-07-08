@@ -105,7 +105,7 @@ class WBL_Social_Post_Type
             'exclude_from_search'   => true,
             'publicly_queryable'    => false,
             'capability_type'       => 'post',
-            'show_in_rest'          => false,
+            'show_in_rest'          => true,
         );
 
         register_post_type('wbl_social_set', $args);

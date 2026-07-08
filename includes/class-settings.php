@@ -77,7 +77,11 @@ class WBL_Settings
         register_setting(
             'wbl_social_settings_group',
             $this->option_name,
-            array($this, 'sanitize_settings')
+            array(
+                'type' => 'array',
+                'sanitize_callback' => array($this, 'sanitize_settings'),
+                'default' => array()
+            )
         );
 
         // General Settings Section
@@ -465,140 +469,21 @@ class WBL_Settings
         wp_enqueue_style('wp-color-picker');
         wp_enqueue_script('wp-color-picker');
 
-        // Add inline script to initialize color pickers
-        wp_add_inline_script('wp-color-picker', '
-            jQuery(document).ready(function($) {
-                $(".wbl-color-picker").wpColorPicker();
-            });
-        ');
+        // Enqueue properly extracted admin scripts and styles
+        wp_enqueue_style(
+            'wbl-admin-style',
+            WBL_SOCIAL_PLUGIN_URL . 'assets/css/admin.css',
+            array('wp-color-picker'),
+            WBL_SOCIAL_VERSION
+        );
 
-        wp_add_inline_style('wp-admin', $this->get_inline_css());
-    }
-
-    /**
-     * Get inline CSS for settings page
-     */
-    private function get_inline_css()
-    {
-        return '
-            .wbl-settings-wrap {
-                max-width: 1200px;
-            }
-            .wbl-settings-title {
-                display: flex;
-                align-items: center;
-                gap: 10px;
-                font-size: 23px;
-                font-weight: 400;
-                margin: 0 0 20px;
-                padding: 9px 0;
-                line-height: 1.3;
-            }
-            .wbl-settings-title .dashicons {
-                font-size: 28px;
-                width: 28px;
-                height: 28px;
-                color: #2271b1;
-            }
-            .wbl-settings-container {
-                display: grid;
-                grid-template-columns: 1fr 300px;
-                gap: 20px;
-            }
-            .wbl-settings-form {
-                background: #fff;
-                border: 1px solid #c3c4c7;
-                box-shadow: 0 1px 1px rgba(0,0,0,.04);
-                padding: 20px;
-            }
-            .wbl-settings-form h2 {
-                margin-top: 0;
-                padding-top: 0;
-                font-size: 18px;
-                font-weight: 600;
-            }
-            .wbl-settings-sidebar {
-                display: flex;
-                flex-direction: column;
-                gap: 15px;
-            }
-            .wbl-info-box {
-                background: #fff;
-                border: 1px solid #c3c4c7;
-                box-shadow: 0 1px 1px rgba(0,0,0,.04);
-                padding: 15px;
-            }
-            .wbl-info-box h3 {
-                margin: 0 0 10px;
-                font-size: 14px;
-                font-weight: 600;
-                color: #1d2327;
-                font-size: 14px;
-            }
-            .wbl-info-box ul {
-                margin: 0;
-                padding: 0;
-                list-style: none;
-            }
-            .wbl-info-box li {
-                padding: 5px 0;
-                border-bottom: 1px solid #f0f0f1;
-            }
-            .wbl-info-box li:last-child {
-                border-bottom: none;
-            }
-            .wbl-info-box a {
-                text-decoration: none;
-                color: #2271b1;
-            }
-            .wbl-info-box a:hover {
-                color: #135e96;
-            }
-            .wbl-color-settings {
-                display: grid;
-                gap: 20px;
-                margin-top: 10px;
-            }
-            .wbl-color-group {
-                padding: 15px;
-                background: #f9f9f9;
-                border: 1px solid #ddd;
-                border-radius: 4px;
-            }
-            .wbl-color-group h4 {
-                margin: 0 0 12px;
-                font-size: 14px;
-                font-weight: 600;
-                color: #1d2327;
-            }
-            .wbl-color-row {
-                display: grid;
-                grid-template-columns: 1fr 1fr;
-                gap: 15px;
-                margin-bottom: 10px;
-            }
-            .wbl-color-row:last-child {
-                margin-bottom: 0;
-            }
-            .wbl-color-row label {
-                display: flex;
-                flex-direction: column;
-                gap: 5px;
-            }
-            .wbl-color-row label span {
-                font-size: 12px;
-                font-weight: 500;
-                color: #555;
-            }
-            @media (max-width: 782px) {
-                .wbl-settings-container {
-                    grid-template-columns: 1fr;
-                }
-                .wbl-color-row {
-                    grid-template-columns: 1fr;
-                }
-            }
-        ';
+        wp_enqueue_script(
+            'wbl-admin-script',
+            WBL_SOCIAL_PLUGIN_URL . 'assets/js/admin.js',
+            array('wp-color-picker'),
+            WBL_SOCIAL_VERSION,
+            true
+        );
     }
 
     /**

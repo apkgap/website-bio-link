@@ -60,7 +60,7 @@ class WBL_Elementor_Widgets
         }
 
         // Social links widget
-        $widget_file = WBL_SOCIAL_PLUGIN_DIR . 'elementor-widgets/social-links-widget.php';
+        $widget_file = WBL_SOCIAL_PLUGIN_DIR . 'elementor-widgets/social-links/social-links-widget.php';
         if (file_exists($widget_file)) {
             require_once $widget_file;
             if (class_exists('\WBL_Social_Links_Widget')) {
@@ -73,6 +73,8 @@ class WBL_Elementor_Widgets
                 }
             }
         }
+
+
     }
 
     /**

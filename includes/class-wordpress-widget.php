@@ -72,7 +72,7 @@ class WBL_Social_Widget extends \WP_Widget
 
                 if (class_exists('WBL_Social_Renderer')) {
                     $renderer = WBL_Social_Renderer::instance();
-                    echo $renderer->render_social_list($social_items, $render_args);
+                    echo $renderer->render_social_list($social_items, $render_args, $social_set_id);
                 }
             } else {
                 echo '<p class="wbl-widget-notice">' . esc_html__('No social links found in this set.', 'website-bio-link') . '</p>';

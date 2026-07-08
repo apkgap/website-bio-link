@@ -56,11 +56,11 @@ class WBL_Social_Renderer
         $atts = shortcode_atts(
             array(
                 'id'         => 0,
-                'show_label' => 'false',
-                'style'      => 'circle',
-                'size'       => 'medium',
-                'gap'        => 'medium',
-                'align'      => 'left',
+                'show_label' => '',
+                'style'      => '',
+                'size'       => '',
+                'gap'        => '',
+                'align'      => '',
             ),
             $atts,
             'wbl_socials'
@@ -69,7 +69,7 @@ class WBL_Social_Renderer
         $post_id = intval($atts['id']);
 
         if (! $post_id) {
-            return '<p class="text-red-500">' . esc_html__('Please provide a valid social set ID.', 'website-bio-link') . '</p>';
+            return '<p class="wbl-error text-red-500">' . esc_html__('Please provide a valid social set ID.', 'website-bio-link') . '</p>';
         }
 
         // Get social items
@@ -79,7 +79,7 @@ class WBL_Social_Renderer
             return '';
         }
 
-        return $this->render_social_list($social_items, $atts);
+        return $this->render_social_list($social_items, $atts, $post_id);
     }
 
     /**
@@ -87,42 +87,94 @@ class WBL_Social_Renderer
      *
      * @param array $social_items Social items data
      * @param array $args         Display arguments
+     * @param int   $post_id      Post ID for fetching meta settings
      * @return string HTML output
      */
-    public function render_social_list($social_items, $args = array())
+    public function render_social_list($social_items, $args = array(), $post_id = 0)
     {
-        $defaults = array(
-            'show_label' => 'false',
-            'style'      => 'circle',
-            'size'       => 'medium',
-            'gap'        => 'medium',
-            'align'      => 'left',
-            'icon_type'  => 'svg', // 'svg' or 'fontawesome'
-        );
+        $global_settings = class_exists('WBL_Settings') ? WBL_Settings::instance()->get_settings() : array();
+        
+        $meta_settings = $post_id ? get_post_meta($post_id, '_wbl_social_display_settings', true) : array();
+        if (!is_array($meta_settings)) {
+            $meta_settings = array();
+        }
 
-        $args = wp_parse_args($args, $defaults);
+        // Determine settings: Shortcode args > Post Meta override > Global default
+        $style = !empty($args['style']) ? $args['style'] : (!empty($meta_settings['icon_style']) ? $meta_settings['icon_style'] : ($global_settings['default_style'] ?? 'circle'));
+        $size = !empty($args['size']) ? $args['size'] : (!empty($meta_settings['icon_size_preset']) ? $meta_settings['icon_size_preset'] : ($global_settings['default_size'] ?? 'medium'));
+        $gap = !empty($args['gap']) ? $args['gap'] : (!empty($meta_settings['gap_preset']) ? $meta_settings['gap_preset'] : ($global_settings['default_gap'] ?? 'medium'));
+        $align = !empty($args['align']) ? $args['align'] : 'left';
+        
+        $show_label = !empty($args['show_label']) && $args['show_label'] !== 'false' ? true : false;
+        $icon_type = 'svg';
 
-        $show_label = filter_var($args['show_label'], FILTER_VALIDATE_BOOLEAN);
-        $style = sanitize_text_field($args['style']);
-        $size = sanitize_text_field($args['size']);
-        $gap = sanitize_text_field($args['gap']);
-        $align = sanitize_text_field($args['align']);
-        $icon_type = sanitize_text_field($args['icon_type']);
+        // Check for Custom Colors based on Style
+        $use_custom_colors = !empty($meta_settings['use_custom_colors']);
+        $colors = array('primary' => '', 'secondary' => '', 'hover_primary' => '', 'hover_secondary' => '');
+
+        if ($use_custom_colors && !empty($meta_settings['colors'])) {
+            $colors = wp_parse_args($meta_settings['colors'], $colors);
+        } else if (!empty($global_settings['default_colors'][$style])) {
+            $colors = wp_parse_args($global_settings['default_colors'][$style], $colors);
+        }
+
+        $style = sanitize_text_field($style);
+        $size = sanitize_text_field($size);
+        $gap = sanitize_text_field($gap);
+        $align = sanitize_text_field($align);
+
+        $scope_id = 'wbl-social-' . substr(md5(uniqid(rand(), true)), 0, 8);
 
         // Build CSS classes
-        $container_classes = array('wbl-social-list');
+        $container_classes = array('wbl-social-list', $scope_id);
         $container_classes[] = 'wbl-social-style-' . $style;
         $container_classes[] = 'wbl-social-size-' . $size;
         $container_classes[] = 'wbl-social-gap-' . $gap;
         $container_classes[] = 'wbl-social-align-' . $align;
 
+        // Generate inline <style> if colors are set
+        $css = '';
+        if (array_filter($colors)) { // checking if ANY color is set
+            $p = !empty($colors['primary']) ? $colors['primary'] : '';
+            $s = !empty($colors['secondary']) ? $colors['secondary'] : '';
+            $hp = !empty($colors['hover_primary']) ? $colors['hover_primary'] : '';
+            $hs = !empty($colors['hover_secondary']) ? $colors['hover_secondary'] : '';
+            
+            $cid = "." . $scope_id;
+            
+            if ($style === 'circle' || $style === 'rounded') {
+                if ($p) $css .= "$cid .wbl-social-icon-wrapper { background-color: $p !important; } ";
+                if ($s) $css .= "$cid .wbl-social-icon-wrapper { color: $s !important; } ";
+                if ($hp) $css .= "$cid .wbl-social-link:hover .wbl-social-icon-wrapper { background-color: $hp !important; } ";
+                if ($hs) $css .= "$cid .wbl-social-link:hover .wbl-social-icon-wrapper { color: $hs !important; } ";
+            } else if ($style === 'flat') {
+                if ($p) $css .= "$cid .wbl-social-icon-wrapper { border-color: $p !important; color: $p !important; } ";
+                if ($hp) $css .= "$cid .wbl-social-link:hover .wbl-social-icon-wrapper { background-color: $hp !important; border-color: $hp !important; } ";
+                if ($hs) $css .= "$cid .wbl-social-link:hover .wbl-social-icon-wrapper { color: $hs !important; } ";
+            } else if ($style === 'minimal') {
+                if ($p) $css .= "$cid .wbl-social-icon-wrapper { color: $p !important; } ";
+                if ($hp) $css .= "$cid .wbl-social-link:hover .wbl-social-icon-wrapper { color: $hp !important; } ";
+            } else if ($style === 'glass') {
+                if ($s) $css .= "$cid .wbl-social-icon-wrapper { background-color: $s !important; border-color: $s !important; } ";
+                if ($p) $css .= "$cid .wbl-social-icon-wrapper { color: $p !important; } ";
+                if ($hs) $css .= "$cid .wbl-social-link:hover .wbl-social-icon-wrapper { background-color: $hs !important; } ";
+                if ($hp) $css .= "$cid .wbl-social-link:hover .wbl-social-icon-wrapper { color: $hp !important; } ";
+            } else if ($style === 'gradient') {
+                if ($p && $s) $css .= "$cid .wbl-social-icon-wrapper { background: linear-gradient(135deg, $p 0%, $s 100%) !important; } ";
+                if ($hp && $hs) $css .= "$cid .wbl-social-link:hover .wbl-social-icon-wrapper { background: linear-gradient(135deg, $hp 0%, $hs 100%) !important; } ";
+            }
+        }
+
         ob_start();
+        
+        if (!empty($css)) {
+            echo '<style>' . $css . '</style>';
+        }
 ?>
         <ul class="<?php echo esc_attr(implode(' ', $container_classes)); ?>">
             <?php foreach ($social_items as $item) : ?>
                 <?php
                 if (!class_exists('WBL_Social_Config')) {
-                    // Fallback or prevent fatal error if config not loaded
                     continue;
                 }
 
@@ -131,19 +183,18 @@ class WBL_Social_Renderer
                     continue;
                 }
 
-                // Validate required platform data
                 if (!isset($platform_data['color']) || !isset($platform_data['label'])) {
                     continue;
                 }
 
                 $url = esc_url($item['url']);
                 $label = ! empty($item['label']) ? $item['label'] : $platform_data['label'];
-                $color = $platform_data['color'];
+                
+                // Keep original brand color as fallback for CSS var if custom colors aren't used fully
+                $brand_color = $platform_data['color'];
 
-                // Get icon (SVG or FontAwesome)
                 $icon_html = '';
                 if ($icon_type === 'svg' && isset($platform_data['svg_icon'])) {
-                    // Use SVG icon
                     if (class_exists('WBL_SVG_Icons')) {
                         $svg_icons = WBL_SVG_Icons::instance();
                         $icon_html = $svg_icons->get_svg_icon($platform_data['svg_icon'], array(
@@ -153,7 +204,6 @@ class WBL_Social_Renderer
                         ));
                     }
                 } elseif (isset($platform_data['icon_class'])) {
-                    // Use FontAwesome as fallback
                     $icon_html = '<i class="' . esc_attr($platform_data['icon_class']) . ' wbl-social-icon" aria-hidden="true"></i>';
                 }
 
@@ -168,7 +218,7 @@ class WBL_Social_Renderer
                         rel="noopener noreferrer"
                         class="wbl-social-link group"
                         aria-label="<?php echo esc_attr($label); ?>"
-                        style="--brand-color: <?php echo esc_attr($color); ?>;">
+                        style="--brand-color: <?php echo esc_attr($brand_color); ?>;">
                         <span class="wbl-social-icon-wrapper">
                             <?php echo $icon_html; ?>
                         </span>
